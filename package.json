@@ -13,12 +13,14 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "chroma-js": "^2.4.2",
     "firebase": "^9.9.4",
     "immer": "^9.0.15",
     "lodash.omit": "^4.5.0",
     "next": "^12.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
     "react-toastify": "^9.0.8",
     "typescript": "^4.8.2",
     "zustand": "^4.1.1"
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@emotion/babel-plugin": "^11.10.2",
     "@emotion/eslint-plugin": "^11.10.0",
+    "@types/chroma-js": "^2.1.4",
     "@types/lodash.omit": "^4.5.7",
     "@types/node": "^18.7.16",
     "@types/react": "^18.0.18",

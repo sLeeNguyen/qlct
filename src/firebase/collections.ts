@@ -1,11 +1,4 @@
-import {
-  collection,
-  CollectionReference,
-  DocumentData,
-  FirestoreDataConverter,
-  Timestamp,
-  WithFieldValue,
-} from 'firebase/firestore';
+import { collection, FirestoreDataConverter, Timestamp } from 'firebase/firestore';
 import { User } from 'src/store';
 import firebase from '.';
 

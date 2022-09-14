@@ -4,8 +4,9 @@ import Head from 'next/head';
 import { Fragment } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import ResetCSS from 'src/components/ResetCSS';
+import ResetCSS from 'src/styles/ResetCSS';
 import { useAuthStateListener } from 'src/hooks/useAuthStateListener';
+import GlobalStyles from 'src/styles/GlobalStyles';
 
 type NextPageWithLayout = NextPage & {
   Layout?: React.FC<React.PropsWithChildren<unknown>>;
@@ -34,6 +35,7 @@ function MyApp(props: MyAppProps) {
         <title>Quan ly thu chi</title>
       </Head>
       <ResetCSS />
+      <GlobalStyles />
       <Layout>
         <ToastContainer
           position="top-right"
