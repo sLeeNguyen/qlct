@@ -2,7 +2,10 @@ import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { Fragment } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import ResetCSS from 'src/components/ResetCSS';
+import { useAuthStateListener } from 'src/hooks/useAuthStateListener';
 
 type NextPageWithLayout = NextPage & {
   Layout?: React.FC<React.PropsWithChildren<unknown>>;
@@ -17,6 +20,8 @@ function MyApp(props: MyAppProps) {
 
   const Layout = Component.Layout || Fragment;
 
+  useAuthStateListener();
+
   return (
     <>
       <Head>
@@ -30,6 +35,16 @@ function MyApp(props: MyAppProps) {
       </Head>
       <ResetCSS />
       <Layout>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          pauseOnHover
+        />
         <Component {...pageProps} />
       </Layout>
     </>
