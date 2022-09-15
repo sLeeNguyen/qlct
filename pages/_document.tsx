@@ -6,11 +6,11 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <meta name="theme-color" content="#000000" />
+          <meta name="theme-color" content="#619733" />
           <link rel="shortcut icon" href={buildPathToPublicResource('favicon.ico')} />
-          <link rel="apple-touch-icon" sizes="32x32" href={buildPathToPublicResource('favicon32.png')} />
-          <link rel="apple-touch-icon" sizes="64x64" href={buildPathToPublicResource('favicon64.png')} />
-          <link rel="apple-touch-icon" sizes="256x256" href={buildPathToPublicResource('favicon256.png')} />
+          <link rel="apple-touch-icon" sizes="32x32" href={buildPathToPublicResource('images/logo32.png')} />
+          <link rel="apple-touch-icon" sizes="64x64" href={buildPathToPublicResource('images/logo64.png')} />
+          <link rel="apple-touch-icon" sizes="128x128" href={buildPathToPublicResource('images/logo128.png')} />
           <link rel="manifest" href={buildPathToPublicResource('manifest.json')} />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

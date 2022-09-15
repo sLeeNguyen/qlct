@@ -9,18 +9,18 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/favicon64.png",
+      "src": "/image/logo64.png",
       "type": "image/png",
       "sizes": "64x64"
     },
     {
-      "src": "/favicon256.png",
+      "src": "/logo128.png",
       "type": "image/png",
-      "sizes": "256x256"
+      "sizes": "128x128"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#619733",
+  "background_color": "#F8F8F8"
 }
