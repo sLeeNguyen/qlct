@@ -6,7 +6,7 @@ export type InOrOut = 'income' | 'outcome';
 
 export type InOutDoc = {
   id: string;
-  title: string;
+  content: string;
   value: number;
   type: InOrOut;
   time: number;
