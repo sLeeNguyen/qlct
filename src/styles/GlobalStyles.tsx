@@ -5,6 +5,10 @@ export default function GlobalStyles() {
   return (
     <Global
       styles={{
+        '*': {
+          boxSizing: 'border-box',
+          margin: 0,
+        },
         body: {
           backgroundColor: colors.background,
           // eslint-disable-next-line quotes
