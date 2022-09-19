@@ -53,7 +53,7 @@ export default function BalanceOverall() {
             contentStyle={{
               fontSize: 14,
             }}
-            formatter={(value: any) => [`${value} VND`, 'Balance']}
+            formatter={(value: number) => [`${value} VND`, 'Balance']}
             labelFormatter={(idx, payload) => {
               if (payload[0]?.payload) {
                 return new Date(payload[0].payload.timestamp).toLocaleDateString();

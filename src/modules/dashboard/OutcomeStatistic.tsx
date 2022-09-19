@@ -41,7 +41,7 @@ export default function OutcomeStatistic() {
                 marginLeft: 'auto',
               }}
             >
-              <Image src={OutcomeImg.src} blurDataURL={OutcomeImg.blurDataURL} width={40} height={40} />
+              <Image src={OutcomeImg.src} blurDataURL={OutcomeImg.blurDataURL} width={40} height={40} alt="outcome" />
             </div>
           </div>
         </div>

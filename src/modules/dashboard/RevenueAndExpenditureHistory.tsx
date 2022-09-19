@@ -1,5 +1,4 @@
-import React from 'react';
-import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardBody, CardTitleText } from 'src/components/card';
 import { colors } from 'src/configs/theme';
 
@@ -160,7 +159,7 @@ export default function RevenueAndExpenditureHistory() {
               contentStyle={{
                 fontSize: 14,
               }}
-              formatter={(value: any) => [`${value} VND`, 'Balance']}
+              formatter={(value: number) => [`${value} VND`, 'Balance']}
               labelFormatter={(idx, payload) => {
                 if (payload[0]?.payload) {
                   return new Date(payload[0].payload.timestamp).toLocaleDateString();

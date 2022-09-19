@@ -2,15 +2,15 @@ import styled from '@emotion/styled';
 import { colors } from 'src/configs/theme';
 import { Text } from '../Text';
 
-export const Card = styled.div((props) => ({
+export const Card = styled.div((_props) => ({
   backgroundColor: colors.surface,
   borderRadius: 8,
   overflow: 'hidden',
   boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.1)',
 }));
 
-export const CardTitle = styled.div((props) => ({
-  padding: '16px 20px',
+export const CardHeader = styled.div((_props) => ({
+  padding: '12px 20px',
 }));
 
 export const CardTitleText = styled(Text)({
@@ -19,6 +19,6 @@ export const CardTitleText = styled(Text)({
   fontWeight: 400,
 });
 
-export const CardBody = styled.div((props) => ({
+export const CardBody = styled.div((_props) => ({
   padding: '16px 20px',
 }));
