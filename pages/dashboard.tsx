@@ -1,28 +1,14 @@
-import IncomeImg from 'public/images/income.png';
-import OutcomeImg from 'public/images/outcome.png';
-//
-import chroma from 'chroma-js';
-import { FirebaseError } from 'firebase/app';
-import { addDoc } from 'firebase/firestore';
-import Image from 'next/image';
 import { useEffect } from 'react';
-import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon } from 'react-feather';
-import { toast } from 'react-toastify';
-import { Line, LineChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { Card, CardBody, CardTitleText } from 'src/components/card';
 import { Container } from 'src/components/container';
 import { GridContainer, GridItem } from 'src/components/grid';
 import requireAuth from 'src/components/requireAuth';
-import { Text, TextSmall } from 'src/components/Text';
-import { colors } from 'src/configs/theme';
-import { collections } from 'src/firebase/collections';
 import MainLayout from 'src/layouts/MainLayout';
-import { useUserStore } from 'src/store';
-import { useDashboardStore } from 'src/store/dashboard';
-import RevenueAndExpenditureHistory from 'src/modules/dashboard/RevenueAndExpenditureHistory';
 import BalanceOverall from 'src/modules/dashboard/BalanceOverall';
 import IncomeStatistic from 'src/modules/dashboard/IncomeStatistic';
 import OutcomeStatistic from 'src/modules/dashboard/OutcomeStatistic';
+import RevenueAndExpenditureHistory from 'src/modules/dashboard/RevenueAndExpenditureHistory';
+import { useUserStore } from 'src/store';
+import { useDashboardStore } from 'src/store/dashboard';
 
 function Dashboard() {
   const user = useUserStore((state) => state.user);
@@ -34,31 +20,6 @@ function Dashboard() {
       fetchHistories(user.uid);
     }
   }, [user, fetchOverall, fetchHistories]);
-
-  const handleAddInOut = async () => {
-    try {
-      if (!user) {
-        throw new Error('User not found');
-      }
-      const data = {
-        content: 'Banh mi',
-        value: 34000,
-        type: 'outcome',
-        uid: user?.uid,
-        time: new Date().getTime(),
-        categories: ['WBzwxnmWbvZ9ipcEcQLK', ''],
-      };
-      await addDoc(collections.inOut, data);
-      toast.success('Added successfully');
-    } catch (error) {
-      console.error(error);
-      let msg = 'Error';
-      if (error instanceof FirebaseError) {
-        msg = error.code;
-      }
-      toast.error(msg);
-    }
-  };
 
   return (
     <Container maxWidth="xl">
