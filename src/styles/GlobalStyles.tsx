@@ -16,6 +16,11 @@ export default function GlobalStyles() {
           fontWeight: 300,
           color: colors.textPrimary,
         },
+        button: {
+          fontWeight: 500,
+          // eslint-disable-next-line quotes
+          fontFamily: "'Montserrat', sans-serif",
+        },
       }}
     />
   );

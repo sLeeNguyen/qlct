@@ -5,5 +5,6 @@ export const colors = {
   textPrimaryDarker: '#504E59',
   surface: '#FFFFFF',
   background: '#F8F8F8',
-  error: '#e74c3c',
+  error: '#E74C3C',
+  errorDarker: '#C23020',
 };

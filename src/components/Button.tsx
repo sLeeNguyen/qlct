@@ -5,30 +5,38 @@ import chroma from 'chroma-js';
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   variant: 'contained' | 'outlined';
-  color: 'primary' | 'default';
+  color: 'primary' | 'default' | 'error';
   fullWidth?: boolean;
   loading?: boolean;
   loadingText?: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  size: 'large' | 'medium' | 'small';
 }
 
 export default function Button(props: React.PropsWithChildren<ButtonProps>) {
-  const { children, color, variant, fullWidth, loading, loadingText, ...other } = props;
+  const { children, color, size, variant, fullWidth, loading, loadingText, startIcon, endIcon, ...other } = props;
 
   const css = useMemo(() => {
     const colorsMap = {
       primary: colors.primary,
       default: colors.textPrimary,
+      error: colors.error,
       primaryDarker: colors.primaryDarker,
       defaultDarker: colors.textPrimaryDarker,
+      errorDarker: colors.errorDarker,
     };
 
     const _css: Attributes['css'] = {
+      display: 'inline-flex',
+      justifyContent: 'center',
+      alignItems: 'center',
       borderRadius: 4,
       fontWeight: 500,
       padding: '10px 16px',
       cursor: loading ? 'progress' : 'pointer',
       border: 'none',
-      fontSize: '16px',
+      fontSize: '14px',
       ':hover': {
         transition: '250ms all linear',
       },
@@ -54,12 +62,25 @@ export default function Button(props: React.PropsWithChildren<ButtonProps>) {
       _css['width'] = '100%';
     }
 
+    if (size === 'large') {
+      _css['padding'] = '12px 20px';
+      _css['fontSize'] = 18;
+    } else if (size === 'small') {
+      _css['padding'] = '8px 12px';
+      _css['fontSize'] = 14;
+    } else {
+      _css['padding'] = '10px 16px';
+      _css['fontSize'] = 16;
+    }
+
     return _css;
-  }, [loading, variant, fullWidth, color, other.disabled]);
+  }, [loading, variant, fullWidth, color, other.disabled, size]);
 
   return (
     <button css={css} {...other}>
-      {loading ? loadingText ? loadingText : <>{children}...</> : children}
+      {startIcon && <span css={{ display: 'inline-flex', alignItems: 'center', marginRight: 8 }}>{startIcon}</span>}
+      <span>{loading ? loadingText ? loadingText : <>{children}...</> : children}</span>
+      {endIcon && <span css={{ display: 'inline-flex', alignItems: 'center', marginRight: 8 }}>{startIcon}</span>}
     </button>
   );
 }
@@ -67,6 +88,7 @@ export default function Button(props: React.PropsWithChildren<ButtonProps>) {
 Button.defaultProps = {
   variant: 'contained',
   color: 'default',
+  size: 'medium',
   fullWidth: false,
   loading: false,
 };
