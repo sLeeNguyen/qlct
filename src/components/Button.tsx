@@ -3,7 +3,7 @@ import React, { Attributes, ButtonHTMLAttributes, useMemo } from 'react';
 import { colors } from 'src/configs/theme';
 import chroma from 'chroma-js';
 
-interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   variant: 'contained' | 'outlined';
   color: 'primary' | 'default' | 'error';
   fullWidth?: boolean;
@@ -14,7 +14,7 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'col
   size: 'large' | 'medium' | 'small';
 }
 
-export default function Button(props: React.PropsWithChildren<ButtonProps>) {
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
   const { children, color, size, variant, fullWidth, loading, loadingText, startIcon, endIcon, ...other } = props;
 
   const css = useMemo(() => {
@@ -77,13 +77,13 @@ export default function Button(props: React.PropsWithChildren<ButtonProps>) {
   }, [loading, variant, fullWidth, color, other.disabled, size]);
 
   return (
-    <button css={css} {...other}>
+    <button ref={ref} css={css} {...other}>
       {startIcon && <span css={{ display: 'inline-flex', alignItems: 'center', marginRight: 8 }}>{startIcon}</span>}
       <span>{loading ? loadingText ? loadingText : <>{children}...</> : children}</span>
       {endIcon && <span css={{ display: 'inline-flex', alignItems: 'center', marginRight: 8 }}>{startIcon}</span>}
     </button>
   );
-}
+});
 
 Button.defaultProps = {
   variant: 'contained',
@@ -92,3 +92,5 @@ Button.defaultProps = {
   fullWidth: false,
   loading: false,
 };
+
+export default Button;

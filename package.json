@@ -13,6 +13,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@popperjs/core": "^2.11.6",
     "chroma-js": "^2.4.2",
     "firebase": "^9.9.4",
     "immer": "^9.0.15",
@@ -21,6 +22,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
+    "react-popper": "^2.3.0",
     "react-toastify": "^9.0.8",
     "recharts": "2.1.12",
     "typescript": "^4.8.2",
