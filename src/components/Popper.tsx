@@ -46,16 +46,16 @@ const Popper = React.forwardRef<HTMLDivElement, React.PropsWithChildren<PopperPr
     return m;
   }, [open, arrow, arrowElement, popperOptions]);
 
-  const { styles, attributes, forceUpdate } = usePopper(resolveAnchorEl(anchorEl), popperElement, {
+  const { styles, attributes, update } = usePopper(resolveAnchorEl(anchorEl), popperElement, {
     ...popperOptions,
     modifiers,
   });
 
   useEffect(() => {
-    if (open && forceUpdate) {
-      forceUpdate();
+    if (open && update) {
+      update();
     }
-  }, [open, forceUpdate]);
+  }, [open, update]);
 
   if (!open) {
     return null;
