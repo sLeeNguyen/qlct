@@ -4,14 +4,14 @@ import { colors } from 'src/configs/theme';
 import chroma from 'chroma-js';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
-  variant: 'contained' | 'outlined';
-  color: 'primary' | 'default' | 'error';
+  variant?: 'contained' | 'outlined';
+  color?: 'primary' | 'default' | 'error';
   fullWidth?: boolean;
   loading?: boolean;
   loadingText?: string;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-  size: 'large' | 'medium' | 'small';
+  size?: 'large' | 'medium' | 'small';
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
