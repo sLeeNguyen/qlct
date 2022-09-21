@@ -8,11 +8,13 @@ import { CategoryDoc } from 'src/firebase/collections';
 import { useManagementStore } from 'src/store/management';
 import CategoryActions from './CategoryActions';
 import CategoryItem from './CategoryItem';
+import { useYourCategoriesStore } from './store';
 
 export type CategoryItemData = CategoryDoc;
 
 function YourCategories() {
   const [status, categories] = useManagementStore((state) => [state.categoriesFS, state.categories]);
+  const selectedCategories = useYourCategoriesStore((state) => state.selectedCategories);
 
   return (
     <Card>
@@ -37,7 +39,7 @@ function YourCategories() {
             }}
           >
             {categories?.map((item) => (
-              <CategoryItem data={item} key={item.id} />
+              <CategoryItem data={item} key={item.id} selected={selectedCategories[item.id]} />
             ))}
           </div>
         </StatusContainer>

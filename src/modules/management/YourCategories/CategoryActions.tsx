@@ -1,5 +1,6 @@
-import { PlusCircle as PlusCircleIcon, Trash2 as Trash2Icon } from 'react-feather';
+import { PlusCircle as PlusCircleIcon } from 'react-feather';
 import { colors } from 'src/configs/theme';
+import Delete from './Delete';
 
 export default function CategoryActions() {
   return (
@@ -11,14 +12,14 @@ export default function CategoryActions() {
         '& .category-action': {
           cursor: 'pointer',
           transition: '250ms color ease',
-          ':hover': {
+          '&.focused, &:hover': {
             color: colors.primary,
           },
         },
       }}
     >
       <PlusCircleIcon className="category-action" size={16} strokeWidth={2.5} />
-      <Trash2Icon className="category-action" size={16} strokeWidth={2.5} />
+      <Delete />
     </div>
   );
 }
