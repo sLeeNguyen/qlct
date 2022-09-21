@@ -69,6 +69,9 @@ const Popper = React.forwardRef<HTMLDivElement, React.PropsWithChildren<PopperPr
       style={styles.popper}
       {...attributes.popper}
       css={{
+        backgroundColor: colors.surface,
+        borderRadius: 8,
+        filter: 'drop-shadow(0px 0px 4px rgba(97, 151, 51, 0.6)) drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.25))',
         '&[data-popper-placement^="top"] .popper-arrow': {
           bottom: -6,
         },
@@ -103,14 +106,14 @@ const Popper = React.forwardRef<HTMLDivElement, React.PropsWithChildren<PopperPr
                 backgroundColor: colors.surface,
                 transform: 'rotate(45deg)',
                 // transformOrigin: '100% 0px',
-                boxShadow: '-4px -4px 6px rgba(0, 0, 0, 0.1)',
+                // boxShadow: '-4px -4px 6px rgba(0, 0, 0, 0.1)',
               },
             }}
           />
-          <Card>{children}</Card>
+          {children}
         </div>
       ) : (
-        <Card>{children}</Card>
+        children
       )}
     </div>,
     document.body

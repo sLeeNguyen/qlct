@@ -102,7 +102,12 @@ export default function Pagination(props: PaginationProps) {
         }}
       >
         {pages.map((item, idx) => {
-          if (item === null) return <span className="pagination-item pagination-more">...</span>;
+          if (item === null)
+            return (
+              <span key={idx} className="pagination-item pagination-more">
+                ...
+              </span>
+            );
           return (
             <PageItem
               key={idx}

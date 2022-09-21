@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo, useState } from 'react';
 
-export interface UsePaginationProps<T> {
-  data: Array<T>;
+export interface UsePaginationProps {
+  total: number;
   pageSize: number;
 }
 
-export default function usePagination<T = any>(props: UsePaginationProps<T>) {
-  const { data, pageSize } = props;
-  const n = data.length;
+export default function usePagination(props: UsePaginationProps) {
+  const { total, pageSize } = props;
+  const n = total;
 
   const [page, _setPage] = useState<number>(1);
 
@@ -18,10 +18,6 @@ export default function usePagination<T = any>(props: UsePaginationProps<T>) {
 
   const from = useMemo<number>(() => pageSize * (page - 1), [page, pageSize]);
   const to = useMemo<number>(() => (from + pageSize > n ? n : from + pageSize), [n, from, pageSize]);
-
-  const renderList = useMemo<Array<T>>(() => {
-    return data.slice(from, to);
-  }, [from, to, data]);
 
   const setPage = useCallback(
     (newPage: number) => {
@@ -41,7 +37,6 @@ export default function usePagination<T = any>(props: UsePaginationProps<T>) {
     setPage,
     pageSize,
     numberOfPages,
-    renderList,
     from,
     to: to,
     total: n,

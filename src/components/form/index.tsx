@@ -5,16 +5,16 @@ import { TextSmall } from '../Text';
 
 interface AdditionalInputProps {
   error?: boolean;
-  helperText?: string;
+  helperText?: React.ReactNode;
   fullWidth?: boolean;
 }
 
-type InputProps = AdditionalInputProps & React.InputHTMLAttributes<HTMLInputElement>;
+export type InputProps = AdditionalInputProps & React.InputHTMLAttributes<HTMLInputElement>;
 
 const StyledInput = styled.input<AdditionalInputProps>((props) => ({
   borderRadius: 4,
   border: '1px solid',
-  borderColor: props.error ? colors.error : 'rgba(110, 107, 123, 0.35)',
+  borderColor: props.error ? colors.error : 'rgba(110, 107, 123, 0.5)',
   outlineColor: props.error ? colors.error : colors.primary,
   color: 'inherit',
   padding: '10px 12px',
@@ -32,12 +32,13 @@ export const Form = styled.form({
   },
 });
 
-export const FormField = styled.div<{ row?: boolean }>((props) => ({
+export const FormField = styled.div<{ row?: boolean; spacing?: number }>((props) => ({
   position: 'relative',
   display: 'flex',
   flexDirection: props.row ? 'row' : 'column',
   '& > :not(:last-child)': {
-    marginBottom: 6,
+    marginBottom: props.row ? undefined : (props.spacing ?? 1) * 6,
+    marginRight: props.row ? (props.spacing ?? 1) * 6 : undefined,
   },
 }));
 
@@ -75,6 +76,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
   return (
     <>
       <StyledInput ref={ref} {...other} error={error} />
+      {helperText && <TextSmall color={error ? colors.error : undefined}>{helperText}</TextSmall>}
+    </>
+  );
+});
+
+const StyledTextArea = StyledInput.withComponent('textarea');
+export type TextAreaProps = AdditionalInputProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+export const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(props, ref) {
+  const { helperText, error, fullWidth, ...other } = props;
+
+  return (
+    <>
+      <StyledTextArea ref={ref} {...other} error={error} />
       {helperText && <TextSmall color={error ? colors.error : undefined}>{helperText}</TextSmall>}
     </>
   );
