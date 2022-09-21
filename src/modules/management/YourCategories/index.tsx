@@ -1,4 +1,5 @@
 import chroma from 'chroma-js';
+import React from 'react';
 import { Card, CardBody, CardHeader } from 'src/components/card';
 import StatusContainer from 'src/components/StatusContainer';
 import { Text } from 'src/components/Text';
@@ -10,7 +11,7 @@ import CategoryItem from './CategoryItem';
 
 export type CategoryItemData = CategoryDoc;
 
-export default function YourCategories() {
+function YourCategories() {
   const [status, categories] = useManagementStore((state) => [state.categoriesFS, state.categories]);
 
   return (
@@ -44,3 +45,5 @@ export default function YourCategories() {
     </Card>
   );
 }
+
+export default React.memo(YourCategories);

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import chroma from 'chroma-js';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import Pagination from 'src/components/Pagination';
 import StatusContainer from 'src/components/StatusContainer';
@@ -45,7 +45,7 @@ const TableCell = styled.td<TableCellProps>((props) => ({
   whiteSpace: props.noWrap ? 'nowrap' : undefined,
 }));
 
-export default function InOutList() {
+function InOutList() {
   const user = useUserStore((state) => state.user as User);
   const [status, fetchInOut, data, numberOfInOuts] = useManagementStore((state) => [
     state.inOutFS,
@@ -127,3 +127,5 @@ export default function InOutList() {
     </div>
   );
 }
+
+export default React.memo(InOutList);
