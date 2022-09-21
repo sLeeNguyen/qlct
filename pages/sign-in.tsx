@@ -14,6 +14,7 @@ import { Eye as EyeIcon, EyeOff as EyeOffIcon } from 'react-feather';
 import { toast } from 'react-toastify';
 import Button from 'src/components/Button';
 import Checkbox from 'src/components/Checkbox';
+import { Form, FormField, Input, InputWithIcon, Label } from 'src/components/form';
 import Link from 'src/components/Link';
 import { Text, TextSmall } from 'src/components/Text';
 import { colors } from 'src/configs/theme';
@@ -47,60 +48,6 @@ const SignInCard = styled.div({
     marginBottom: 36,
   },
 });
-
-const Form = styled.form({
-  width: '100%',
-  '& > *:not(:last-child)': {
-    marginBottom: 16,
-  },
-});
-
-const Label = styled.label({
-  fontSize: '14px',
-  color: colors.textPrimary,
-  lineHeight: 17 / 14,
-});
-
-const FormField = styled.div<{ row?: boolean }>((props) => ({
-  position: 'relative',
-  display: 'flex',
-  flexDirection: props.row ? 'row' : 'column',
-  '& > :not(:last-child)': {
-    marginBottom: 6,
-  },
-}));
-
-const InputWithIcon = styled.div<{ position: 'start' | 'end' }>((props) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'relative',
-  '& .inp-icon-end': {
-    position: 'absolute',
-    top: 0,
-    right: 12,
-    transform: 'translateY(50%)',
-    cursor: 'pointer',
-    ':hover': {
-      transition: '250ms all linear',
-      color: colors.primary,
-    },
-  },
-  '& > input': {
-    paddingRight: props.position === 'end' ? 44 : undefined,
-    paddingLeft: props.position === 'start' ? 44 : undefined,
-  },
-}));
-
-const Input = styled.input<{ error?: boolean }>((props) => ({
-  borderRadius: 4,
-  border: '1px solid',
-  borderColor: props.error ? colors.error : 'rgba(110, 107, 123, 0.35)',
-  outlineColor: props.error ? colors.error : colors.primary,
-  color: 'inherit',
-  padding: '10px 12px',
-  fontSize: 16,
-  fontWeight: 300,
-}));
 
 export default function SignInPage() {
   const router = useRouter();
@@ -154,6 +101,8 @@ export default function SignInPage() {
           msg = 'Username or email does not exist';
         } else if (error.code === 'auth/wrong-password') {
           msg = 'Invalid password';
+        } else if (error.code === 'auth/user-disabled') {
+          msg = 'Account is disabled';
         }
       }
       toast.error(msg);
@@ -249,9 +198,9 @@ export default function SignInPage() {
                   error={passwordHelperText !== undefined}
                 />
                 {isShowPassword ? (
-                  <EyeOffIcon size={20} className="inp-icon-end" onClick={() => setIsShowPassword(false)} />
+                  <EyeIcon size={20} className="inp-icon-end" onClick={() => setIsShowPassword(false)} />
                 ) : (
-                  <EyeIcon size={20} className="inp-icon-end" onClick={() => setIsShowPassword(true)} />
+                  <EyeOffIcon size={20} className="inp-icon-end" onClick={() => setIsShowPassword(true)} />
                 )}
               </InputWithIcon>
               {passwordHelperText && <TextSmall color={colors.error}>{passwordHelperText}</TextSmall>}
