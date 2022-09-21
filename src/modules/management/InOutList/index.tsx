@@ -1,10 +1,15 @@
 import styled from '@emotion/styled';
 import chroma from 'chroma-js';
+import { useEffect, useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import Pagination from 'src/components/Pagination';
+import StatusContainer from 'src/components/StatusContainer';
 import { Text, TextSmall } from 'src/components/Text';
+import { FS } from 'src/configs/fs';
 import { colors } from 'src/configs/theme';
 import usePagination from 'src/hooks/usePagination';
+import { User, useUserStore } from 'src/store';
+import { useManagementStore } from 'src/store/management';
 import ListActions from './ListActions';
 
 const ResponsiveTable = styled.div({
@@ -40,88 +45,24 @@ const TableCell = styled.td<TableCellProps>((props) => ({
   whiteSpace: props.noWrap ? 'nowrap' : undefined,
 }));
 
-const list = [
-  {
-    id: 1,
-    time: '22-09-02 18:00:02',
-    content: 'salary 8/22 salary 8/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 2,
-    time: '22-09-02 18:00:02',
-    content: 'salary 7/22 salary 8/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 3,
-    time: '22-09-02 18:00:02',
-    content: 'salary 8/22 salary 8/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 4,
-    time: '22-09-02 18:00:02',
-    content: 'salary 12/22 salary 8/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 5,
-    time: '22-09-02 18:00:02',
-    content: 'salary 12/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 6,
-    time: '22-09-02 18:00:02',
-    content: 'salary 12/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 7,
-    time: '22-09-02 18:00:02',
-    content: 'salary 0/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 8,
-    time: '22-09-02 18:00:02',
-    content: 'salary 0/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 9,
-    time: '22-09-02 18:00:02',
-    content: 'salary 0/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 10,
-    time: '22-09-02 18:00:02',
-    content: 'salary 0/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-  {
-    id: 11,
-    time: '22-09-02 18:00:02',
-    content: 'salary 0/22 salary 2/22 salary 8/22 salary 8/22',
-    value: 22020202,
-    type: 'income',
-  },
-];
-
 export default function InOutList() {
-  const { numberOfPages, page, renderList, from, to, total, setPage } = usePagination({ data: list, pageSize: 5 });
+  const user = useUserStore((state) => state.user as User);
+  const [status, fetchInOut, data, numberOfInOuts] = useManagementStore((state) => [
+    state.inOutFS,
+    state.fetchInOut,
+    state.revenuesAndExpenditures,
+    state.numberOfInOuts,
+  ]);
+
+  const [pageSize] = useState<number>(10);
+  const { numberOfPages, page, from, to, total, setPage } = usePagination({ total: numberOfInOuts ?? 0, pageSize });
+
+  useEffect(() => {
+    fetchInOut(user.uid, {
+      page,
+      pageSize,
+    });
+  }, [page, pageSize, user, fetchInOut]);
 
   return (
     <div>
@@ -149,36 +90,39 @@ export default function InOutList() {
             </tr>
           </TableHead>
           <TableBody>
-            {renderList.map((item) => (
-              <tr key={item.id}>
-                <TableCell>
-                  <Checkbox size={18} />
-                </TableCell>
-                <TableCell noWrap>{item.time}</TableCell>
-                <TableCell>{item.content}</TableCell>
-                <TableCell noWrap align="right">
-                  {item.value}
-                </TableCell>
-                <TableCell noWrap align="center">
-                  {item.time === 'income' ? 'In' : 'Out'}
-                </TableCell>
-              </tr>
-            ))}
+            {(status === FS.SUCCESS || status === FS.UPDATING) &&
+              data?.map((item) => (
+                <tr key={item.id}>
+                  <TableCell>
+                    <Checkbox size={18} />
+                  </TableCell>
+                  <TableCell noWrap>{new Date(item.time).toLocaleString()}</TableCell>
+                  <TableCell>{item.content}</TableCell>
+                  <TableCell noWrap align="right">
+                    {item.value}
+                  </TableCell>
+                  <TableCell noWrap align="center">
+                    {item.type === 'income' ? 'In' : 'Out'}
+                  </TableCell>
+                </tr>
+              ))}
           </TableBody>
         </Table>
-        <div
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            padding: '16px 20px',
-          }}
-        >
-          <Pagination nPages={numberOfPages} page={page} onChange={setPage} />
-          <TextSmall css={{ minWidth: 180, textAlign: 'right' }}>
-            Show {from} - {to} of {total}
-          </TextSmall>
-        </div>
+        <StatusContainer status={status}>
+          <div
+            css={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              padding: '16px 20px',
+            }}
+          >
+            <Pagination nPages={numberOfPages} page={page} onChange={setPage} />
+            <TextSmall css={{ minWidth: 180, textAlign: 'right' }}>
+              Show {from} - {to} of {total}
+            </TextSmall>
+          </div>
+        </StatusContainer>
       </ResponsiveTable>
     </div>
   );

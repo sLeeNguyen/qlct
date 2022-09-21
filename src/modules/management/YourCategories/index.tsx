@@ -1,39 +1,18 @@
 import chroma from 'chroma-js';
 import { Card, CardBody, CardHeader } from 'src/components/card';
+import StatusContainer from 'src/components/StatusContainer';
 import { Text } from 'src/components/Text';
 import { colors } from 'src/configs/theme';
+import { CategoryDoc } from 'src/firebase/collections';
+import { useManagementStore } from 'src/store/management';
 import CategoryActions from './CategoryActions';
 import CategoryItem from './CategoryItem';
 
-export type CategoryItemData = {
-  id: string;
-  name: string;
-  description: string;
-  nItems: number;
-};
-
-const list: Array<CategoryItemData> = [
-  {
-    id: '43KexdddAbUWIvs7XaAh',
-    name: 'breakfast',
-    description: 'Expense for breakfast',
-    nItems: 10,
-  },
-  {
-    id: 'FwegWGz41C6ZNlHLuCNW',
-    name: 'lunch',
-    description: 'Expense for lunch',
-    nItems: 10,
-  },
-  {
-    id: '43KexdddAbUWIvs7XaAl',
-    name: 'eat',
-    description: 'Expense for eating',
-    nItems: 10,
-  },
-];
+export type CategoryItemData = CategoryDoc;
 
 export default function YourCategories() {
+  const [status, categories] = useManagementStore((state) => [state.categoriesFS, state.categories]);
+
   return (
     <Card>
       <CardHeader
@@ -48,17 +27,19 @@ export default function YourCategories() {
         <CategoryActions />
       </CardHeader>
       <CardBody>
-        <div
-          css={{
-            '> *:not(:last-child)': {
-              marginBottom: 8,
-            },
-          }}
-        >
-          {list.map((item) => (
-            <CategoryItem data={item} key={item.id} />
-          ))}
-        </div>
+        <StatusContainer status={status}>
+          <div
+            css={{
+              '> *:not(:last-child)': {
+                marginBottom: 8,
+              },
+            }}
+          >
+            {categories?.map((item) => (
+              <CategoryItem data={item} key={item.id} />
+            ))}
+          </div>
+        </StatusContainer>
       </CardBody>
     </Card>
   );

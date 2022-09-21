@@ -5,7 +5,7 @@ import firebase from '.';
 export type InOrOut = 'income' | 'outcome';
 
 export type InOutDoc = {
-  id: string;
+  id?: string;
   content: string;
   value: number;
   type: InOrOut;
