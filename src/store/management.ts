@@ -13,6 +13,10 @@ export interface UseManagementStore {
   fetchInOut: (uid: User['uid'], options?: FetchInOutOptions) => Promise<void>;
   categoriesFS: FS;
   inOutFS: FS;
+  pagination: {
+    page: number;
+    pageSize: number;
+  };
 }
 
 export interface FetchInOutOptions {
@@ -21,9 +25,13 @@ export interface FetchInOutOptions {
 }
 
 export const useManagementStore = create<UseManagementStore, [['zustand/immer', never]]>(
-  immer((set) => ({
+  immer((set, get) => ({
     categoriesFS: FS.IDLE,
     inOutFS: FS.IDLE,
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
     fetchCategories: async (uid: User['uid']) => {
       set((state) => {
         if (state.categoriesFS === FS.SUCCESS) {
@@ -48,6 +56,7 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
       }
     },
     fetchInOut: async (uid: User['uid'], options: FetchInOutOptions = {}) => {
+      const pagination = get().pagination;
       set((state) => {
         if (state.inOutFS === FS.SUCCESS) {
           state.inOutFS = FS.UPDATING;
@@ -57,8 +66,8 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
       });
 
       try {
-        const _page = Number(options.page ?? 1);
-        const _pageSize = Number(options.pageSize ?? 10);
+        const _page = Number(options.page ?? pagination.page);
+        const _pageSize = Number(options.pageSize ?? pagination.pageSize);
 
         // get ref to the last doc of previous page
         let last = null;
@@ -84,6 +93,10 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
           state.revenuesAndExpenditures = qSnap.docs.map((doc) => doc.data());
           state.numberOfInOuts = 100; // TODO: update to real data
           state.inOutFS = FS.SUCCESS;
+          state.pagination = {
+            page: _page,
+            pageSize: _pageSize,
+          };
         });
       } catch (error) {
         console.error('fetchInOut', error);

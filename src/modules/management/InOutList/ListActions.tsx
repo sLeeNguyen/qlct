@@ -1,6 +1,7 @@
-import { Filter as FilterIcon, Trash2 as Trash2Icon } from 'react-feather';
+import { Filter as FilterIcon } from 'react-feather';
 import Button from 'src/components/Button';
 import Add from './Add';
+import Delete from './Delete';
 
 export default function ListActions() {
   return (
@@ -11,9 +12,7 @@ export default function ListActions() {
         },
       }}
     >
-      <Button size="small" variant="contained" color="error" startIcon={<Trash2Icon size={16} />}>
-        Delete
-      </Button>
+      <Delete />
       <Add />
       <Button size="small" variant="contained" color="primary" startIcon={<FilterIcon size={16} />}>
         Filter

@@ -53,7 +53,7 @@ export default function Add(props: Partial<ButtonProps>) {
 
   const categoriesOptions = useMemo<ReactSelectOption[]>(() => {
     if (!categories) return [];
-    return categories.map((item) => ({ value: item.id, label: item.name }));
+    return categories.map((item) => ({ value: item.id as string, label: item.name }));
   }, [categories]);
 
   const [openPopper, setOpenPopper] = useState<boolean>(false);

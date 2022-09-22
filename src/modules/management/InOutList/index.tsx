@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import styled from '@emotion/styled';
 import chroma from 'chroma-js';
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import Pagination from 'src/components/Pagination';
 import StatusContainer from 'src/components/StatusContainer';
@@ -11,6 +12,7 @@ import usePagination from 'src/hooks/usePagination';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import ListActions from './ListActions';
+import { useInOutListStore } from './store';
 
 const ResponsiveTable = styled.div({
   backgroundColor: colors.surface,
@@ -53,16 +55,29 @@ function InOutList() {
     state.revenuesAndExpenditures,
     state.numberOfInOuts,
   ]);
+  const inOutListStore = useInOutListStore();
 
   const [pageSize] = useState<number>(10);
   const { numberOfPages, page, from, to, total, setPage } = usePagination({ total: numberOfInOuts ?? 0, pageSize });
 
-  useEffect(() => {
+  const fetcher = useCallback(async () => {
     fetchInOut(user.uid, {
       page,
       pageSize,
     });
-  }, [page, pageSize, user, fetchInOut]);
+  }, [page, pageSize, fetchInOut, user]);
+
+  useEffect(() => {
+    fetcher();
+  }, [fetcher]);
+
+  const handleSelectAll = (ev: ChangeEvent<HTMLInputElement>) => {
+    if (ev.target.checked) {
+      inOutListStore.selectAll(data?.map((doc) => doc.id!) ?? []);
+    } else {
+      inOutListStore.deselectAll();
+    }
+  };
 
   return (
     <div>
@@ -77,7 +92,7 @@ function InOutList() {
           <TableHead>
             <tr>
               <TableCell as="th">
-                <Checkbox size={18} />
+                <Checkbox size={18} checked={inOutListStore.isSelectAll} onChange={handleSelectAll} />
               </TableCell>
               <TableCell as="th">Time</TableCell>
               <TableCell as="th">Content</TableCell>
@@ -94,7 +109,11 @@ function InOutList() {
               data?.map((item) => (
                 <tr key={item.id}>
                   <TableCell>
-                    <Checkbox size={18} />
+                    <Checkbox
+                      size={18}
+                      checked={Boolean(inOutListStore.selectedItems[item.id!])}
+                      onClick={() => inOutListStore.toggleItem(item.id!)}
+                    />
                   </TableCell>
                   <TableCell noWrap>{new Date(item.time).toLocaleString()}</TableCell>
                   <TableCell>{item.content}</TableCell>
