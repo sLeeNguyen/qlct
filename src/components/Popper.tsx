@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { usePopper } from 'react-popper';
 import { colors } from 'src/configs/theme';
 import { setRef } from 'src/utils';
-import { Card } from './card';
 
 export interface PopperProps extends React.HTMLAttributes<HTMLDivElement> {
   open: boolean;
