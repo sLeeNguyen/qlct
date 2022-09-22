@@ -15,7 +15,7 @@ export type InOutDoc = {
 };
 
 export type CategoryDoc = {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   uid: User['uid'];

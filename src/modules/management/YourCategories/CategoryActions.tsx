@@ -1,8 +1,11 @@
 import { PlusCircle as PlusCircleIcon } from 'react-feather';
 import { colors } from 'src/configs/theme';
 import Delete from './Delete';
+import { useYourCategoriesStore } from './store';
 
 export default function CategoryActions() {
+  const [openAddForm, toggleAddForm] = useYourCategoriesStore((state) => [state.openAddForm, state.toggleAddForm]);
+
   return (
     <div
       css={{
@@ -18,7 +21,12 @@ export default function CategoryActions() {
         },
       }}
     >
-      <PlusCircleIcon className="category-action" size={16} strokeWidth={2.5} />
+      <PlusCircleIcon
+        className={`category-action${openAddForm ? ' focused' : ''}`}
+        size={16}
+        strokeWidth={2.5}
+        onClick={toggleAddForm}
+      />
       <Delete />
     </div>
   );
