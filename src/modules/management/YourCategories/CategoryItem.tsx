@@ -12,7 +12,8 @@ export default function CategoryItem(props: CategoryItemProps) {
   const toggleSelectedCategory = useYourCategoriesStore((state) => state.toggleSelectedCategory);
 
   const handleToggleSelect = () => {
-    toggleSelectedCategory(props.data.id);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    toggleSelectedCategory(props.data.id!);
   };
 
   return (

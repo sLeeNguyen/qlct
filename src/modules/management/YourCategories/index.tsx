@@ -1,6 +1,7 @@
 import chroma from 'chroma-js';
 import React, { useEffect } from 'react';
 import { Card, CardBody, CardHeader } from 'src/components/card';
+import Spinner from 'src/components/Spinner';
 import StatusContainer from 'src/components/StatusContainer';
 import { Text } from 'src/components/Text';
 import { colors } from 'src/configs/theme';
@@ -36,7 +37,14 @@ function YourCategories() {
       </CardHeader>
       <AddForm />
       <CardBody>
-        <StatusContainer status={status}>
+        <StatusContainer
+          status={status}
+          loading={
+            <div css={{ textAlign: 'center', padding: '24px 0' }}>
+              <Spinner />
+            </div>
+          }
+        >
           <div
             css={{
               '> *:not(:last-child)': {

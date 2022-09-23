@@ -4,6 +4,7 @@ import chroma from 'chroma-js';
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import Pagination from 'src/components/Pagination';
+import Spinner from 'src/components/Spinner';
 import StatusContainer from 'src/components/StatusContainer';
 import { Text, TextSmall } from 'src/components/Text';
 import { FS } from 'src/configs/fs';
@@ -11,6 +12,7 @@ import { colors } from 'src/configs/theme';
 import usePagination from 'src/hooks/usePagination';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
+import { formatNumber } from 'src/utils';
 import ListActions from './ListActions';
 import { useInOutListStore } from './store';
 
@@ -118,7 +120,7 @@ function InOutList() {
                   <TableCell noWrap>{new Date(item.time).toLocaleString()}</TableCell>
                   <TableCell>{item.content}</TableCell>
                   <TableCell noWrap align="right">
-                    {item.value}
+                    {formatNumber(item.value)}
                   </TableCell>
                   <TableCell noWrap align="center">
                     {item.type === 'income' ? 'In' : 'Out'}
@@ -127,7 +129,14 @@ function InOutList() {
               ))}
           </TableBody>
         </Table>
-        <StatusContainer status={status}>
+        <StatusContainer
+          status={status}
+          loading={
+            <div css={{ textAlign: 'center', padding: '24px 0' }}>
+              <Spinner />
+            </div>
+          }
+        >
           <div
             css={{
               display: 'flex',
