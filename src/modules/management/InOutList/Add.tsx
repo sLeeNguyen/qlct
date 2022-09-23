@@ -20,26 +20,19 @@ import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 
 type FormDataState = {
-  type: {
-    value: 'income' | 'outcome';
-    helperText?: string | undefined | null;
-  };
-  value: {
-    value: string;
-    helperText?: string | undefined | null;
-  };
-  time: {
-    value: Date;
-    helperText?: string | undefined | null;
-  };
-  content: {
-    value: string;
-    helperText?: string | undefined | null;
-  };
-  categories: {
-    value: string[];
-    helperText?: string | undefined | null;
-  };
+  type: 'income' | 'outcome';
+  value: string;
+  time: Date;
+  content: string;
+  categories: string[];
+};
+
+type FormDataStateHelperText = {
+  type?: string | null | undefined;
+  value: string | null | undefined;
+  time?: string | null | undefined;
+  content?: string | null | undefined;
+  categories?: string | null | undefined;
 };
 
 type ReactSelectOption = {
@@ -59,32 +52,27 @@ export default function Add(props: Partial<ButtonProps>) {
   const [openPopper, setOpenPopper] = useState<boolean>(false);
   const [buttonElement, setButtonElement] = useState<HTMLButtonElement | null>(null);
   const [formData, setFormData] = useState<FormDataState>({
-    type: {
-      value: 'income',
-    },
-    value: {
-      value: '0',
-      helperText: null,
-    },
-    time: {
-      value: new Date(),
-      helperText: null,
-    },
-    content: {
-      value: '',
-    },
-    categories: {
-      value: [],
-    },
+    type: 'outcome',
+    value: '0',
+    time: new Date(),
+    content: '',
+    categories: [],
+  });
+  const [formDataHelperText, setFormDataHelperText] = useState<FormDataStateHelperText>({
+    type: null,
+    value: null,
+    time: null,
+    content: null,
+    categories: null,
   });
   const [isAdding, setIsAdding] = useState<boolean>(false);
 
   const submitBtnDisabled = Boolean(
-    formData.categories.helperText ||
-      formData.content.helperText ||
-      formData.time.helperText ||
-      formData.value.helperText ||
-      formData.type.helperText ||
+    formDataHelperText.categories ||
+      formDataHelperText.content ||
+      formDataHelperText.time ||
+      formDataHelperText.value ||
+      formDataHelperText.type ||
       isAdding
   );
 
@@ -108,11 +96,14 @@ export default function Add(props: Partial<ButtonProps>) {
   };
 
   const getInputChangeHandler =
-    (name: 'type' | 'value' | 'content' | 'categories') =>
-    (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (name: 'type' | 'value' | 'content') => (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setFormData(
         produce((d) => {
-          d[name].value = ev.target.value;
+          if (name === 'type') {
+            d[name] = ev.target.value as 'income' | 'outcome';
+          } else {
+            d[name] = ev.target.value;
+          }
         })
       );
     };
@@ -120,7 +111,7 @@ export default function Add(props: Partial<ButtonProps>) {
   const handleTimeChange = (date: Date | null) => {
     setFormData(
       produce((d) => {
-        d.time.value = date ?? new Date();
+        d.time = date ?? new Date();
       })
     );
   };
@@ -128,26 +119,26 @@ export default function Add(props: Partial<ButtonProps>) {
   const handleCategoriesChange: ReactSelectProps<ReactSelectOption, true>['onChange'] = (newValue) => {
     setFormData(
       produce((d) => {
-        d.categories.value = newValue.map((item) => item.value);
+        d.categories = newValue.map((item) => item.value);
       })
     );
   };
 
   const validateForm = (formData: FormDataState) => {
     let flag = true;
-    setFormData(
+    setFormDataHelperText(
       produce((d) => {
         const check = (isInvalid: boolean, field: keyof FormDataState, message: string) => {
           if (isInvalid) {
             flag = false;
-            d[field].helperText = message;
+            d[field] = message;
           } else {
-            d[field].helperText = null;
+            d[field] = null;
           }
         };
-        check(!['income', 'outcome'].includes(formData.type.value), 'type', 'Please choose one type');
-        check(!formData.value.value || isNaN(Number(formData.value.value)), 'value', 'Please enter a number');
-        check(!(formData.time.value instanceof Date), 'time', 'Invalid date');
+        check(!['income', 'outcome'].includes(formData.type), 'type', 'Please choose one type');
+        check(!formData.value || isNaN(Number(formData.value)), 'value', 'Please enter a number');
+        check(!(formData.time instanceof Date), 'time', 'Invalid date');
       })
     );
     return flag;
@@ -159,33 +150,15 @@ export default function Add(props: Partial<ButtonProps>) {
     try {
       setIsAdding(true);
       await addDoc(collections.inOut, {
-        type: formData.type.value,
-        content: formData.content.value,
-        time: formData.time.value.getTime(),
-        categories: formData.categories.value,
+        type: formData.type,
+        content: formData.content,
+        time: formData.time.getTime(),
+        categories: formData.categories,
         uid: user.uid,
-        value: Number(formData.value.value),
+        value: Number(formData.value),
       });
       toast.success('Added successfully');
-      setFormData({
-        type: {
-          value: formData.type.value,
-        },
-        value: {
-          value: '0',
-          helperText: null,
-        },
-        time: {
-          value: new Date(),
-          helperText: null,
-        },
-        content: {
-          value: '',
-        },
-        categories: {
-          value: [],
-        },
-      });
+      setFormData({ type: 'outcome', value: '0', time: new Date(), content: '', categories: [] });
     } catch (error) {
       console.error(error);
       toast.error((error as Error).message);
@@ -238,7 +211,7 @@ export default function Add(props: Partial<ButtonProps>) {
                     name="type"
                     value="income"
                     onChange={getInputChangeHandler('type')}
-                    checked={formData.type.value === 'income'}
+                    checked={formData.type === 'income'}
                   />
                   <Label htmlFor="income">Income</Label>
                 </FormField>
@@ -249,7 +222,7 @@ export default function Add(props: Partial<ButtonProps>) {
                     name="type"
                     value="outcome"
                     onChange={getInputChangeHandler('type')}
-                    checked={formData.type.value === 'outcome'}
+                    checked={formData.type === 'outcome'}
                   />
                   <Label htmlFor="outcome">Outcome</Label>
                 </FormField>
@@ -263,10 +236,10 @@ export default function Add(props: Partial<ButtonProps>) {
                       name="value"
                       type="number"
                       fullWidth
-                      value={formData.value.value}
+                      value={formData.value}
                       onChange={getInputChangeHandler('value')}
-                      error={!!formData.value.helperText}
-                      helperText={formData.value.helperText}
+                      error={!!formDataHelperText.value}
+                      helperText={formDataHelperText.value}
                     />
                   </FormField>
                 </GridItem>
@@ -284,7 +257,7 @@ export default function Add(props: Partial<ButtonProps>) {
                         id="time"
                         name="time"
                         showTimeSelect
-                        selected={formData.time.value}
+                        selected={formData.time}
                         customInput={<Input />}
                         closeOnScroll={true}
                         onChange={handleTimeChange}
@@ -302,10 +275,10 @@ export default function Add(props: Partial<ButtonProps>) {
                   name="content"
                   fullWidth
                   rows={3}
-                  value={formData.content.value}
+                  value={formData.content}
                   onChange={getInputChangeHandler('content')}
-                  error={!!formData.content.helperText}
-                  helperText={formData.content.helperText}
+                  error={!!formDataHelperText.content}
+                  helperText={formDataHelperText.content}
                 />
               </FormField>
               <FormField>
