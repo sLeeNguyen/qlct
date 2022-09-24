@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import styled from '@emotion/styled';
 import chroma from 'chroma-js';
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import Pagination from 'src/components/Pagination';
 import Spinner from 'src/components/Spinner';
@@ -35,6 +35,11 @@ const TableHead = styled.thead({
 
 const TableBody = styled.tbody({
   backgroundColor: colors.surface,
+  '> tr': {
+    '&:hover': {
+      backgroundColor: chroma(colors.primaryDarker).alpha(0.08).hex(),
+    },
+  },
 });
 
 interface TableCellProps {
@@ -51,12 +56,13 @@ const TableCell = styled.td<TableCellProps>((props) => ({
 
 function InOutList() {
   const user = useUserStore((state) => state.user as User);
-  const [status, fetchInOut, data, numberOfInOuts] = useManagementStore((state) => [
+  const [status, fetchInOut, normalizedData, numberOfInOuts] = useManagementStore((state) => [
     state.inOutFS,
     state.fetchInOut,
     state.revenuesAndExpenditures,
     state.numberOfInOuts,
   ]);
+  const data = useMemo(() => Object.values(normalizedData ?? {}), [normalizedData]);
   const inOutListStore = useInOutListStore();
 
   const [pageSize] = useState<number>(10);
@@ -75,7 +81,7 @@ function InOutList() {
 
   const handleSelectAll = (ev: ChangeEvent<HTMLInputElement>) => {
     if (ev.target.checked) {
-      inOutListStore.selectAll(data?.map((doc) => doc.id!) ?? []);
+      inOutListStore.selectAll(Object.keys(normalizedData ?? {}));
     } else {
       inOutListStore.deselectAll();
     }
@@ -85,7 +91,7 @@ function InOutList() {
     <div>
       <div css={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
         <Text as="h1" css={{ flexGrow: 1, fontSize: 24, fontWeight: 500, lineHeight: '29.26px' }}>
-          List of revenues and expenditures
+          List of incomes and outcomes
         </Text>
         <ListActions />
       </div>

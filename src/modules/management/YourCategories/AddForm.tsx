@@ -65,6 +65,7 @@ export default function AddForm() {
         name: formData.name,
         description: formData.description,
         uid: user.uid,
+        count: 0,
       });
       fetchCategories(user.uid);
       toast.success('Added successfully');

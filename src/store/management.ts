@@ -7,7 +7,9 @@ import { User } from './user';
 
 export interface UseManagementStore {
   categories?: CategoryDoc[];
-  revenuesAndExpenditures?: InOutDoc[];
+  revenuesAndExpenditures?: {
+    [id: string]: InOutDoc;
+  };
   numberOfInOuts?: number;
   fetchCategories: (uid: User['uid']) => Promise<void>;
   fetchInOut: (uid: User['uid'], options?: FetchInOutOptions) => Promise<void>;
@@ -90,7 +92,10 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
         );
         const qSnap = await getDocs(q);
         set((state) => {
-          state.revenuesAndExpenditures = qSnap.docs.map((doc) => doc.data());
+          state.revenuesAndExpenditures = qSnap.docs.reduce<{ [id: string]: InOutDoc }>((acc, doc) => {
+            acc[doc.id] = doc.data();
+            return acc;
+          }, {});
           state.numberOfInOuts = 100; // TODO: update to real data
           state.inOutFS = FS.SUCCESS;
           state.pagination = {

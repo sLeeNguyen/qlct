@@ -24,12 +24,12 @@ export default function Delete() {
   const deleteCategories = async () => {
     const arrSelectedCategories = Object.keys(selectedCategories);
     if (arrSelectedCategories.length > 0) {
+      setDeleting(true);
       const wb = writeBatch(firebase.db);
       arrSelectedCategories.forEach((id) => {
         wb.delete(doc(collections.category, id));
       });
       try {
-        setDeleting(true);
         await wb.commit();
         fetchCategories(user.uid);
         toast.success('Deleted successfully');

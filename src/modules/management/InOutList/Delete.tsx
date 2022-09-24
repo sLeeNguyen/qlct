@@ -1,4 +1,3 @@
-import { doc, writeBatch } from 'firebase/firestore';
 import { useMemo, useState } from 'react';
 import { Trash2 as Trash2Icon } from 'react-feather';
 import { toast } from 'react-toastify';
@@ -6,8 +5,7 @@ import Button from 'src/components/Button';
 import { Container } from 'src/components/container';
 import Popper from 'src/components/Popper';
 import { Text } from 'src/components/Text';
-import firebase from 'src/firebase';
-import { collections } from 'src/firebase/collections';
+import { deleteInOuts } from 'src/firebase/apis';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import { useInOutListStore } from './store';
@@ -15,7 +13,7 @@ import { useInOutListStore } from './store';
 export default function Delete() {
   const user = useUserStore((state) => state.user as User);
   const selectedItems = useInOutListStore((state) => state.selectedItems);
-  const fetchInOut = useManagementStore((state) => state.fetchInOut);
+  const [fetchInOut, fetchCategories] = useManagementStore((state) => [state.fetchInOut, state.fetchCategories]);
 
   const isShow = useMemo(() => Object.keys(selectedItems).length > 0, [selectedItems]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -27,12 +25,9 @@ export default function Delete() {
       setDeleting(true);
       const arrSelectedItems = Object.keys(selectedItems);
       if (arrSelectedItems.length > 0) {
-        const wb = writeBatch(firebase.db);
-        arrSelectedItems.forEach((id) => {
-          wb.delete(doc(collections.inOut, id));
-        });
-        await wb.commit();
+        await deleteInOuts(arrSelectedItems);
         fetchInOut(user.uid);
+        fetchCategories(user.uid);
         toast.success('Deleted successfully');
       }
     } catch (error) {

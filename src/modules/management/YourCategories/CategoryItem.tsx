@@ -33,7 +33,7 @@ export default function CategoryItem(props: CategoryItemProps) {
           borderRadius: 24,
         }}
       >
-        <TextSmall css={{ fontWeight: 400, color: 'white' }}>{0}</TextSmall>
+        <TextSmall css={{ fontWeight: 400, color: 'white' }}>{props.data.count}</TextSmall>
       </span>
     </div>
   );

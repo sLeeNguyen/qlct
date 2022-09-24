@@ -1,5 +1,4 @@
 import chroma from 'chroma-js';
-import { addDoc } from 'firebase/firestore';
 import produce from 'immer';
 import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -14,7 +13,7 @@ import { GridContainer, GridItem } from 'src/components/grid';
 import Popper from 'src/components/Popper';
 import { Text } from 'src/components/Text';
 import { colors } from 'src/configs/theme';
-import { collections } from 'src/firebase/collections';
+import { addInOut } from 'src/firebase/apis';
 import useComponentDidUpdate from 'src/hooks/useComponentDidUpdate';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
@@ -42,7 +41,11 @@ type ReactSelectOption = {
 
 export default function Add(props: Partial<ButtonProps>) {
   const user = useUserStore((state) => state.user as User);
-  const categories = useManagementStore((state) => state.categories);
+  const [categories, fetchCategories, fetchInOut] = useManagementStore((state) => [
+    state.categories,
+    state.fetchCategories,
+    state.fetchInOut,
+  ]);
 
   const categoriesOptions = useMemo<ReactSelectOption[]>(() => {
     if (!categories) return [];
@@ -149,7 +152,7 @@ export default function Add(props: Partial<ButtonProps>) {
     if (!validateForm(formData)) return;
     try {
       setIsAdding(true);
-      await addDoc(collections.inOut, {
+      await addInOut({
         type: formData.type,
         content: formData.content,
         time: formData.time.getTime(),
@@ -158,6 +161,8 @@ export default function Add(props: Partial<ButtonProps>) {
         value: Number(formData.value),
       });
       toast.success('Added successfully');
+      fetchCategories(user.uid);
+      fetchInOut(user.uid);
       setFormData({ type: 'outcome', value: '0', time: new Date(), content: '', categories: [] });
     } catch (error) {
       console.error(error);
