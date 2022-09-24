@@ -15,7 +15,18 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
-  const { children, color, size, variant, fullWidth, loading, loadingText, startIcon, endIcon, ...other } = props;
+  const {
+    children,
+    color = 'default',
+    size = 'medium',
+    variant = 'contained',
+    fullWidth = false,
+    loading = false,
+    loadingText,
+    startIcon,
+    endIcon,
+    ...other
+  } = props;
 
   const css = useMemo(() => {
     const colorsMap = {
@@ -84,13 +95,5 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     </button>
   );
 });
-
-Button.defaultProps = {
-  variant: 'contained',
-  color: 'default',
-  size: 'medium',
-  fullWidth: false,
-  loading: false,
-};
 
 export default Button;
