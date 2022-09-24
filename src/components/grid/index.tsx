@@ -23,18 +23,20 @@ export const GridContainer = styled.div<GridContainerProps>((props) => ({
 
 //
 type GridColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-export type GridItemProps = {
+export type AdditionalGridItemProps = {
   [bp in keyof Breakpoint]?: GridColumn;
 };
 
-export const GridItem = styled.div<GridItemProps>((props) => {
+export const GridItem = styled.div<AdditionalGridItemProps>((props) => {
   const css: Attributes['css'] = {
     flexGrow: 0,
   };
+  props['xs'];
   let bp: keyof Breakpoint;
   for (bp in breakpoints) {
-    if (typeof props[bp] === 'number' && props[bp] >= 0 && props[bp] <= 12) {
-      const percent = (props[bp] / 12) * 100;
+    const v = props[bp];
+    if (typeof v === 'number' && v >= 0 && v <= 12) {
+      const percent = (v / 12) * 100;
       css[mq.up(bp)] = {
         flexBasis: `${percent}%`,
         maxWidth: `${percent}%`,
