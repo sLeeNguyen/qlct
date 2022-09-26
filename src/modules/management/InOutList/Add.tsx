@@ -3,7 +3,7 @@ import produce from 'immer';
 import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Plus as PlusIcon } from 'react-feather';
-import ReactSelect, { Props as ReactSelectProps } from 'react-select';
+import ReactSelect, { MultiValue, Props as ReactSelectProps } from 'react-select';
 import { toast } from 'react-toastify';
 import Button, { ButtonProps } from 'src/components/Button';
 import { CardBody, CardHeader } from 'src/components/card';
@@ -21,9 +21,9 @@ import { useManagementStore } from 'src/store/management';
 type FormDataState = {
   type: 'income' | 'outcome';
   value: string;
-  time: Date;
+  time: Date | null | undefined;
   content: string;
-  categories: string[];
+  categories: MultiValue<ReactSelectOption>;
 };
 
 type FormDataStateHelperText = {
@@ -57,7 +57,7 @@ export default function Add(props: Partial<ButtonProps>) {
   const [formData, setFormData] = useState<FormDataState>({
     type: 'outcome',
     value: '0',
-    time: new Date(),
+    time: null,
     content: '',
     categories: [],
   });
@@ -122,7 +122,7 @@ export default function Add(props: Partial<ButtonProps>) {
   const handleCategoriesChange: ReactSelectProps<ReactSelectOption, true>['onChange'] = (newValue) => {
     setFormData(
       produce((d) => {
-        d.categories = newValue.map((item) => item.value);
+        d.categories = [...newValue];
       })
     );
   };
@@ -155,15 +155,16 @@ export default function Add(props: Partial<ButtonProps>) {
       await addInOut({
         type: formData.type,
         content: formData.content,
-        time: formData.time.getTime(),
-        categories: formData.categories,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        time: formData.time!.getTime(),
+        categories: formData.categories.map((item) => item.value),
         uid: user.uid,
         value: Number(formData.value),
       });
       toast.success('Added successfully');
       fetchCategories(user.uid);
       fetchInOut(user.uid);
-      setFormData({ type: 'outcome', value: '0', time: new Date(), content: '', categories: [] });
+      setFormData({ type: 'outcome', value: '0', time: formData.time, content: '', categories: [] });
     } catch (error) {
       console.error(error);
       toast.error((error as Error).message);
@@ -262,8 +263,18 @@ export default function Add(props: Partial<ButtonProps>) {
                         id="time"
                         name="time"
                         showTimeSelect
-                        selected={formData.time}
-                        customInput={<Input />}
+                        selected={undefined}
+                        customInput={
+                          <Input
+                            css={{
+                              '& + p': {
+                                marginTop: 6,
+                              },
+                            }}
+                            error={!!formDataHelperText.time}
+                            helperText={formDataHelperText.time}
+                          />
+                        }
                         closeOnScroll={true}
                         onChange={handleTimeChange}
                         calendarClassName="custom-calender"
@@ -292,6 +303,7 @@ export default function Add(props: Partial<ButtonProps>) {
                   isMulti
                   options={categoriesOptions}
                   onChange={handleCategoriesChange}
+                  value={formData.categories}
                   theme={(theme) => ({
                     ...theme,
                     colors: {
