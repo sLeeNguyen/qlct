@@ -264,7 +264,7 @@ export default function Add(props: Partial<ButtonProps>) {
                         id="time"
                         name="time"
                         showTimeSelect
-                        selected={undefined}
+                        selected={formData.time}
                         customInput={
                           <Input
                             css={{
