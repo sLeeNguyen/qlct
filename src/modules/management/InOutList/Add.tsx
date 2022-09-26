@@ -160,6 +160,7 @@ export default function Add(props: Partial<ButtonProps>) {
         categories: formData.categories.map((item) => item.value),
         uid: user.uid,
         value: Number(formData.value),
+        createdAt: new Date().getTime(),
       });
       toast.success('Added successfully');
       fetchCategories(user.uid);

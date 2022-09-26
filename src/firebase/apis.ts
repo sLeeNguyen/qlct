@@ -1,8 +1,13 @@
 import { addDoc, doc, getDocs, increment, orderBy, query, where, writeBatch } from 'firebase/firestore';
-import { User } from 'src/store';
+import { useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import firebase from '.';
 import { collections, History, InOutDoc } from './collections';
+
+const getDay = (timestamp: number): number => {
+  const DAY = 24 * 60 * 60 * 1000;
+  return Math.floor(timestamp / DAY) * DAY;
+};
 
 export async function addInOut(data: InOutDoc) {
   const docRef = await addDoc<InOutDoc>(collections.inOut, data);
@@ -46,7 +51,11 @@ export async function removeCategories(cIds: string[]) {
   await wb.commit();
 }
 
-export async function aggregateData(uid: User['uid']) {
+export async function aggregateData() {
+  const uid = useUserStore.getState().user?.uid;
+  if (uid === undefined) {
+    throw new Error('Authentication is required');
+  }
   const all = await getDocs(query(collections.inOut, where('uid', '==', uid), orderBy('time', 'asc')));
   const categories = await getDocs(query(collections.category, where('uid', '==', uid)));
 
@@ -57,11 +66,19 @@ export async function aggregateData(uid: User['uid']) {
     income: number;
     outcome: number;
   }> = {};
-  const DAY = 24 * 60 * 60 * 1000; // milliseconds
+  const categoryCounts: { [cId: string]: number } = {};
 
   all.forEach((doc) => {
     const data = doc.data();
-    const t = Math.floor(data.time / DAY) * DAY;
+
+    data.categories.forEach((cId) => {
+      if (categoryCounts[cId] === undefined) {
+        categoryCounts[cId] = 0;
+      }
+      categoryCounts[cId] += 1;
+    });
+
+    const t = getDay(data.time);
     if (!history[t]) {
       history[t] = {
         balance: 0,
@@ -78,6 +95,7 @@ export async function aggregateData(uid: User['uid']) {
     }
     history[t].balance = totalIncome - totalOutcome;
   });
+
   const wb = writeBatch(firebase.db);
   wb.set(doc(collections.overall, uid), {
     uid: uid,
@@ -94,5 +112,12 @@ export async function aggregateData(uid: User['uid']) {
       ...v,
     });
   });
+  // update categories's count property
+  Object.entries(categoryCounts).forEach(([cId, count]) => {
+    wb.update(doc(collections.category, cId), {
+      count: count,
+    });
+  });
+
   await wb.commit();
 }

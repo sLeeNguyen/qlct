@@ -12,6 +12,7 @@ export type InOutDoc = {
   time: number;
   uid: User['uid'];
   categories: string[];
+  createdAt: number;
 };
 
 export type CategoryDoc = {
@@ -58,6 +59,7 @@ const inOutConverter: FirestoreDataConverter<InOutDoc> = {
       id: snapshot.id,
       ...data,
       time: (data.time as Timestamp).toMillis(),
+      createdAt: data.createdAt ?? 1664167085378,
     } as InOutDoc;
   },
 };
