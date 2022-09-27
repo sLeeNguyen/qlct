@@ -97,8 +97,8 @@ export default function SignInPage() {
       signOut();
       let msg = 'Something was wrong';
       if (error instanceof FirebaseError) {
-        if (error.code === 'auth/invalid-email') {
-          msg = 'Username or email does not exist';
+        if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
+          msg = 'Account does not exist';
         } else if (error.code === 'auth/wrong-password') {
           msg = 'Invalid password';
         } else if (error.code === 'auth/user-disabled') {
