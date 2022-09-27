@@ -35,17 +35,17 @@ function MyApp(props: MyAppProps) {
       </Head>
       <ResetCSS />
       <GlobalStyles />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+      />
       <Layout>
-        <ToastContainer
-          position="top-right"
-          autoClose={4000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          pauseOnHover
-        />
         <Component {...pageProps} />
       </Layout>
     </>
