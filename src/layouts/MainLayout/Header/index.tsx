@@ -117,9 +117,9 @@ export default function Header() {
 
   const handleSignOut = async () => {
     try {
+      router.push('/');
       await signOut(firebase.auth);
       toast.success('Signed out!');
-      router.push('/');
     } catch (error) {
       console.error(error);
       toast.error((error as Error).message);
