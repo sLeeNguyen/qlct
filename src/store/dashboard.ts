@@ -19,6 +19,7 @@ export interface UseDashboardStore {
   fetchHistories: (uid: User['uid']) => Promise<void>;
   overallFS: FS;
   historiesFS: FS;
+  reset: () => void;
 }
 
 export const useDashboardStore = create<UseDashboardStore, [['zustand/immer', never]]>(
@@ -124,6 +125,19 @@ export const useDashboardStore = create<UseDashboardStore, [['zustand/immer', ne
           state.historiesFS = FS.FAILED;
         });
       }
+    },
+    reset: () => {
+      set((state) => {
+        state.overallFS = FS.IDLE;
+        state.historiesFS = FS.IDLE;
+        state.balance = undefined;
+        state.balanceFluctuation = undefined;
+        state.totalIncome = undefined;
+        state.totalOutcome = undefined;
+        state.incomeHistory = undefined;
+        state.outcomeHistory = undefined;
+        state.inOutHistories = undefined;
+      });
     },
   }))
 );

@@ -27,7 +27,7 @@ export interface UserStore {
   signOut: () => void;
 }
 
-export const useUserStore = create<UserStore, [['zustand/immer', UserStore]]>(
+export const useUserStore = create<UserStore, [['zustand/immer', never]]>(
   immer((set) => ({
     user: undefined,
     isAuthenticated: false,

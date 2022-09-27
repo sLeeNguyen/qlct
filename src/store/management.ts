@@ -19,6 +19,7 @@ export interface UseManagementStore {
     page: number;
     pageSize: number;
   };
+  reset: () => void;
 }
 
 export interface FetchInOutOptions {
@@ -109,6 +110,16 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
           state.inOutFS = FS.FAILED;
         });
       }
+    },
+    reset: () => {
+      set((state) => {
+        state.categoriesFS = FS.IDLE;
+        state.inOutFS = FS.IDLE;
+        state.pagination = { page: 1, pageSize: 10 };
+        state.categories = undefined;
+        state.revenuesAndExpenditures = undefined;
+        state.numberOfInOuts = undefined;
+      });
     },
   }))
 );

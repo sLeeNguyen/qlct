@@ -7,6 +7,7 @@ export interface UseUtilsStore {
   syncFS: FS;
   syncData: () => Promise<void>;
   syncError?: Error | undefined;
+  reset: () => void;
 }
 
 export const useUtilsStore = create<UseUtilsStore, [['zustand/immer', never]]>(
@@ -29,6 +30,12 @@ export const useUtilsStore = create<UseUtilsStore, [['zustand/immer', never]]>(
           state.syncError = error as Error;
         });
       }
+    },
+    reset: () => {
+      set((state) => {
+        state.syncFS = FS.IDLE;
+        state.syncError = undefined;
+      });
     },
   }))
 );
