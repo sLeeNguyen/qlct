@@ -21,6 +21,7 @@ export type CategoryDoc = {
   description: string;
   uid: User['uid'];
   count: number;
+  totalValue: number;
 };
 
 export type History<T = unknown> = {
@@ -74,6 +75,7 @@ const categoryConverter: FirestoreDataConverter<CategoryDoc> = {
       id: snapshot.id,
       ...data,
       count: data.count ?? 0,
+      totalValue: data.totalValue ?? 0,
     } as CategoryDoc;
   },
 };

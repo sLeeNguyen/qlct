@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { addDoc, doc, getDocs, increment, orderBy, query, where, writeBatch } from 'firebase/firestore';
 import { useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
@@ -15,6 +16,7 @@ export async function addInOut(data: InOutDoc) {
   data.categories.forEach((id) => {
     wb.update(doc(collections.category, id), {
       count: increment(1),
+      totalValue: increment(data.value),
     });
   });
   await wb.commit().catch((error) => console.error('(addInOut) Failed to write batch', error));
@@ -66,16 +68,20 @@ export async function aggregateData() {
     income: number;
     outcome: number;
   }> = {};
-  const categoryCounts: { [cId: string]: number } = {};
+  const categoryDataUpdate: any = {};
 
   all.forEach((doc) => {
     const data = doc.data();
 
     data.categories.forEach((cId) => {
-      if (categoryCounts[cId] === undefined) {
-        categoryCounts[cId] = 0;
+      if (categoryDataUpdate[cId] === undefined) {
+        categoryDataUpdate[cId] = {
+          count: 0,
+          totalValue: 0,
+        };
       }
-      categoryCounts[cId] += 1;
+      categoryDataUpdate[cId].count += 1;
+      categoryDataUpdate[cId].totalValue += data.value;
     });
 
     const t = getDay(data.time);
@@ -113,9 +119,10 @@ export async function aggregateData() {
     });
   });
   // update categories's count property
-  Object.entries(categoryCounts).forEach(([cId, count]) => {
+  Object.entries(categoryDataUpdate).forEach(([cId, v]: [string, any]) => {
     wb.update(doc(collections.category, cId), {
-      count: count,
+      count: v.count,
+      totalValue: v.totalValue,
     });
   });
 
