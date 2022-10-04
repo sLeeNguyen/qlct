@@ -12,7 +12,7 @@ import { useInOutListStore } from './store';
 
 export default function Delete() {
   const user = useUserStore((state) => state.user as User);
-  const selectedItems = useInOutListStore((state) => state.selectedItems);
+  const [selectedItems, reset] = useInOutListStore((state) => [state.selectedItems, state.reset]);
   const [fetchInOut, fetchCategories] = useManagementStore((state) => [state.fetchInOut, state.fetchCategories]);
 
   const isShow = useMemo(() => Object.keys(selectedItems).length > 0, [selectedItems]);
@@ -26,6 +26,7 @@ export default function Delete() {
       const arrSelectedItems = Object.keys(selectedItems);
       if (arrSelectedItems.length > 0) {
         await deleteInOuts(arrSelectedItems);
+        reset();
         fetchInOut(user.uid);
         fetchCategories(user.uid);
         toast.success('Deleted successfully');

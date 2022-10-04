@@ -7,6 +7,7 @@ export interface UseInOutListStore {
   selectAll: (ids: string[]) => void;
   deselectAll: () => void;
   isSelectAll: boolean;
+  reset: () => void;
 }
 
 export const useInOutListStore = create<UseInOutListStore, [['zustand/immer', never]]>(
