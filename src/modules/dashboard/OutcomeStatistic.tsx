@@ -12,7 +12,7 @@ import { formatNumber } from 'src/utils';
 import Skeleton from 'src/components/Skeleton';
 
 export default function OutcomeStatistic() {
-  const [totalOutcome, overallFS] = useDashboardStore((state) => [state.totalOutcome, state.overallFS]);
+  const [totalOutcome, overallFS] = useDashboardStore((state) => [state.overall?.totalOutcome, state.overallFS]);
 
   return (
     <Card css={{ height: '100%' }}>

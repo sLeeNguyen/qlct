@@ -49,8 +49,7 @@ export default function RevenueAndExpenditureHistory() {
 
   const data = useMemo<DataItem[]>(() => {
     if (!incomeHistory || !outcomeHistory) return [] as DataItem[];
-    const arrTimestamps = Object.keys(incomeHistory).concat(Object.keys(outcomeHistory));
-    return arrTimestamps.map((t) => ({
+    return Object.keys(incomeHistory).map((t) => ({
       timestamp: Number(t),
       income: incomeHistory[Number(t)] ?? 0,
       outcome: outcomeHistory[Number(t)] ?? 0,

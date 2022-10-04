@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useMemo } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
 import { Card, CardBody, CardTitleText } from 'src/components/card';
@@ -14,8 +15,8 @@ type DataItem = {
 };
 
 export default function BalanceOverall() {
-  const [balance, balanceFluctuation, overallFS] = useDashboardStore((state) => [
-    state.balance,
+  const [overall, balanceFluctuation, overallFS] = useDashboardStore((state) => [
+    state.overall,
     state.balanceFluctuation,
     state.overallFS,
   ]);
@@ -35,7 +36,7 @@ export default function BalanceOverall() {
           <Skeleton width={200} height={30} />
         ) : (
           <Text css={{ fontSize: 28, fontWeight: 600, lineHeight: 34 / 28 }}>
-            {formatNumber(balance)} <Text as="span">VND</Text>
+            {formatNumber(overall!.totalIncome - overall!.totalOutcome)} <Text as="span">VND</Text>
           </Text>
         )}
       </CardBody>
