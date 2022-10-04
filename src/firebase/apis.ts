@@ -17,7 +17,7 @@ export async function addInOut(data: InOutDoc) {
       count: increment(1),
     });
   });
-  wb.commit().catch((error) => console.error('(addInOut) Failed to write batch', error));
+  await wb.commit().catch((error) => console.error('(addInOut) Failed to write batch', error));
   return docRef;
 }
 
