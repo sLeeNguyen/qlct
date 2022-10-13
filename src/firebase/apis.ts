@@ -6,8 +6,8 @@ import firebase from '.';
 import { collections, History, InOutDoc } from './collections';
 
 const getDay = (timestamp: number): number => {
-  const DAY = 24 * 60 * 60 * 1000;
-  return Math.floor(timestamp / DAY) * DAY;
+  // const DAY = 24 * 60 * 60 * 1000;
+  return new Date(new Date(timestamp).toLocaleDateString()).getTime();
 };
 
 export async function addInOut(data: InOutDoc) {
