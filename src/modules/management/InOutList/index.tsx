@@ -9,6 +9,8 @@ import StatusContainer from 'src/components/StatusContainer';
 import { Text, TextSmall } from 'src/components/Text';
 import { FS } from 'src/configs/fs';
 import { colors } from 'src/configs/theme';
+import { InOutDoc } from 'src/firebase/collections';
+import { RequireID } from 'src/global';
 import usePagination from 'src/hooks/usePagination';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
@@ -56,24 +58,24 @@ const TableCell = styled.td<TableCellProps>((props) => ({
 
 function InOutList() {
   const user = useUserStore((state) => state.user as User);
-  const [status, fetchInOut, normalizedData, numberOfInOuts] = useManagementStore((state) => [
+  const [status, fetchInOut, normalizedData] = useManagementStore((state) => [
     state.inOutFS,
-    state.fetchInOut,
+    state.fetchInOut2,
     state.revenuesAndExpenditures,
-    state.numberOfInOuts,
+    // state.numberOfInOuts,
   ]);
-  const data = useMemo(() => Object.values(normalizedData ?? {}), [normalizedData]);
+  const data = useMemo<RequireID<InOutDoc>[]>(() => Object.values(normalizedData ?? {}), [normalizedData]);
   const inOutListStore = useInOutListStore();
 
   const [pageSize] = useState<number>(10);
-  const { numberOfPages, page, from, to, total, setPage } = usePagination({ total: numberOfInOuts ?? 0, pageSize });
+  const { numberOfPages, page, from, to, total, setPage, dataShow } = usePagination({
+    data,
+    pageSize,
+  });
 
   const fetcher = useCallback(async () => {
-    fetchInOut(user.uid, {
-      page,
-      pageSize,
-    });
-  }, [page, pageSize, fetchInOut, user]);
+    fetchInOut(user.uid);
+  }, [fetchInOut, user]);
 
   useEffect(() => {
     fetcher();
@@ -114,13 +116,13 @@ function InOutList() {
           </TableHead>
           <TableBody>
             {(status === FS.SUCCESS || status === FS.UPDATING) &&
-              data?.map((item) => (
+              dataShow?.map((item) => (
                 <tr key={item.id}>
                   <TableCell>
                     <Checkbox
                       size={18}
-                      checked={Boolean(inOutListStore.selectedItems[item.id!])}
-                      onClick={() => inOutListStore.toggleItem(item.id!)}
+                      checked={Boolean(inOutListStore.selectedItems[item.id])}
+                      onClick={() => inOutListStore.toggleItem(item.id)}
                     />
                   </TableCell>
                   <TableCell noWrap>{new Date(item.time).toLocaleString()}</TableCell>
@@ -153,7 +155,7 @@ function InOutList() {
           >
             <Pagination nPages={numberOfPages} page={page} onChange={setPage} />
             <TextSmall css={{ minWidth: 180, textAlign: 'right' }}>
-              Show {from} - {to} of {total}
+              Show {from + 1} - {to} of {total}
             </TextSmall>
           </div>
         </StatusContainer>

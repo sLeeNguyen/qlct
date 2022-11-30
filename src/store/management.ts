@@ -1,6 +1,7 @@
 import { getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { FS } from 'src/configs/fs';
 import { CategoryDoc, collections, InOutDoc } from 'src/firebase/collections';
+import { RequireID } from 'src/global';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { User } from './user';
@@ -8,11 +9,12 @@ import { User } from './user';
 export interface UseManagementStore {
   categories?: CategoryDoc[];
   revenuesAndExpenditures?: {
-    [id: string]: InOutDoc;
+    [id: string]: RequireID<InOutDoc>;
   };
   numberOfInOuts?: number;
   fetchCategories: (uid: User['uid']) => Promise<void>;
   fetchInOut: (uid: User['uid'], options?: FetchInOutOptions) => Promise<void>;
+  fetchInOut2: (uid: User['uid']) => Promise<void>;
   categoriesFS: FS;
   inOutFS: FS;
   pagination: {
@@ -93,8 +95,8 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
         );
         const qSnap = await getDocs(q);
         set((state) => {
-          state.revenuesAndExpenditures = qSnap.docs.reduce<{ [id: string]: InOutDoc }>((acc, doc) => {
-            acc[doc.id] = doc.data();
+          state.revenuesAndExpenditures = qSnap.docs.reduce<{ [id: string]: RequireID<InOutDoc> }>((acc, doc) => {
+            acc[doc.id] = doc.data() as RequireID<InOutDoc>;
             return acc;
           }, {});
           state.numberOfInOuts = 100; // TODO: update to real data
@@ -103,6 +105,32 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
             page: _page,
             pageSize: _pageSize,
           };
+        });
+      } catch (error) {
+        console.error('fetchInOut', error);
+        set((state) => {
+          state.inOutFS = FS.FAILED;
+        });
+      }
+    },
+    fetchInOut2: async (uid: User['uid']) => {
+      set((state) => {
+        if (state.inOutFS === FS.SUCCESS) {
+          state.inOutFS = FS.UPDATING;
+        } else {
+          state.inOutFS = FS.FETCHING;
+        }
+      });
+      try {
+        const q = query<InOutDoc>(collections.inOut, where('uid', '==', uid), orderBy('time', 'desc'));
+        const qSnap = await getDocs(q);
+        set((state) => {
+          state.revenuesAndExpenditures = qSnap.docs.reduce<{ [id: string]: RequireID<InOutDoc> }>((acc, doc) => {
+            acc[doc.id] = doc.data() as RequireID<InOutDoc>;
+            return acc;
+          }, {});
+          state.numberOfInOuts = qSnap.size;
+          state.inOutFS = FS.SUCCESS;
         });
       } catch (error) {
         console.error('fetchInOut', error);

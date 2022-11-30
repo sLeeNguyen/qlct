@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo, useState } from 'react';
+import { isNumeric } from 'src/utils';
 
-export interface UsePaginationProps {
-  total: number;
+export interface UsePaginationProps<T> {
+  total?: number;
   pageSize: number;
+  data?: Array<T>;
 }
 
-export default function usePagination(props: UsePaginationProps) {
-  const { total, pageSize } = props;
-  const n = total;
+export default function usePagination<T = unknown>(props: UsePaginationProps<T>) {
+  const { total, pageSize, data } = props;
+
+  if (!data && !isNumeric(total)) {
+    throw new Error('Must provide at least `total` or `data` property');
+  }
+
+  const n = (total ?? data?.length) as number;
 
   const [page, _setPage] = useState<number>(1);
 
@@ -18,6 +25,8 @@ export default function usePagination(props: UsePaginationProps) {
 
   const from = useMemo<number>(() => pageSize * (page - 1), [page, pageSize]);
   const to = useMemo<number>(() => (from + pageSize > n ? n : from + pageSize), [n, from, pageSize]);
+
+  const dataShow = useMemo<Array<T> | undefined>(() => (data ? data.slice(from, to) : undefined), [data, from, to]);
 
   const setPage = useCallback(
     (newPage: number) => {
@@ -40,5 +49,6 @@ export default function usePagination(props: UsePaginationProps) {
     from,
     to: to,
     total: n,
+    dataShow,
   };
 }
