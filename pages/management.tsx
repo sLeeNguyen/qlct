@@ -7,8 +7,9 @@ import YourCategories from 'src/modules/management/YourCategories';
 //
 import 'react-datepicker/dist/react-datepicker.min.css';
 import { useManagementStore } from 'src/store/management';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { User, useUserStore } from 'src/store';
+import Head from 'next/head';
 
 function Management() {
   const user = useUserStore((state) => state.user as User);
@@ -19,16 +20,22 @@ function Management() {
   }, [fetchCategories, user]);
 
   return (
-    <Container maxWidth="xl">
-      <GridContainer spacing={5}>
-        <GridItem xs={3}>
-          <YourCategories />
-        </GridItem>
-        <GridItem xs={9}>
-          <InOutList />
-        </GridItem>
-      </GridContainer>
-    </Container>
+    <Fragment>
+      <Head>
+        <title>Management - QLTC</title>
+        <meta name="description" content="The first step on the journey to financial freedom" />
+      </Head>
+      <Container maxWidth="xl">
+        <GridContainer spacing={5}>
+          <GridItem xs={3}>
+            <YourCategories />
+          </GridItem>
+          <GridItem xs={9}>
+            <InOutList />
+          </GridItem>
+        </GridContainer>
+      </Container>
+    </Fragment>
   );
 }
 

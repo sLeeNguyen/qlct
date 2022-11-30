@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import Head from 'next/head';
+import { Fragment, useEffect } from 'react';
 import { Container } from 'src/components/container';
 import { GridContainer, GridItem } from 'src/components/grid';
 import requireAuth from 'src/components/requireAuth';
@@ -22,26 +23,31 @@ function Dashboard() {
   }, [user, fetchOverall, fetchHistories]);
 
   return (
-    <Container maxWidth="xl">
-      <GridContainer spacing={4}>
-        <GridItem xs={5}>
-          <BalanceOverall />
-        </GridItem>
-        <GridItem xs={7}>
-          <GridContainer colSpacing={4} spacing={0} css={{ height: '100%' }}>
-            <GridItem xs={12} sm={6}>
-              <IncomeStatistic />
-            </GridItem>
-            <GridItem xs={12} sm={6}>
-              <OutcomeStatistic />
-            </GridItem>
-          </GridContainer>
-        </GridItem>
-        <GridItem xs={12}>
-          <RevenueAndExpenditureHistory />
-        </GridItem>
-      </GridContainer>
-    </Container>
+    <Fragment>
+      <Head>
+        <title>Dashboard - QLTC</title>
+      </Head>
+      <Container maxWidth="xl">
+        <GridContainer spacing={4}>
+          <GridItem xs={5}>
+            <BalanceOverall />
+          </GridItem>
+          <GridItem xs={7}>
+            <GridContainer colSpacing={4} spacing={0} css={{ height: '100%' }}>
+              <GridItem xs={12} sm={6}>
+                <IncomeStatistic />
+              </GridItem>
+              <GridItem xs={12} sm={6}>
+                <OutcomeStatistic />
+              </GridItem>
+            </GridContainer>
+          </GridItem>
+          <GridItem xs={12}>
+            <RevenueAndExpenditureHistory />
+          </GridItem>
+        </GridContainer>
+      </Container>
+    </Fragment>
   );
 }
 

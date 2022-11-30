@@ -30,8 +30,8 @@ function MyApp(props: MyAppProps) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, viewport-fit=cover"
         />
-        <meta name="description" content="Quan ly thu chi ca nhan" />
-        <title>Quan ly thu chi</title>
+        <meta name="description" content="The first step on the journey to financial freedom" />
+        <title>QLTC</title>
       </Head>
       <ResetCSS />
       <GlobalStyles />
