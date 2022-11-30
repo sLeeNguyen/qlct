@@ -18,7 +18,7 @@ import useComponentDidUpdate from 'src/hooks/useComponentDidUpdate';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 
-type FormDataState = {
+export type FormDataState = {
   type: 'income' | 'outcome';
   value: string;
   time: Date | null | undefined;
@@ -26,7 +26,7 @@ type FormDataState = {
   categories: MultiValue<ReactSelectOption>;
 };
 
-type FormDataStateHelperText = {
+export type FormDataStateHelperText = {
   type?: string | null | undefined;
   value: string | null | undefined;
   time?: string | null | undefined;
@@ -34,7 +34,7 @@ type FormDataStateHelperText = {
   categories?: string | null | undefined;
 };
 
-type ReactSelectOption = {
+export type ReactSelectOption = {
   value: string;
   label: string;
 };
@@ -274,6 +274,7 @@ export default function Add(props: Partial<ButtonProps>) {
                             }}
                             error={!!formDataHelperText.time}
                             helperText={formDataHelperText.time}
+                            autoComplete={'off'}
                           />
                         }
                         closeOnScroll={true}

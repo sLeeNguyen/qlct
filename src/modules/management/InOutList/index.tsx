@@ -15,6 +15,7 @@ import usePagination from 'src/hooks/usePagination';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import { formatNumber } from 'src/utils';
+import Edit from './Edit';
 import ListActions from './ListActions';
 import { useInOutListStore } from './store';
 
@@ -40,6 +41,9 @@ const TableBody = styled.tbody({
   '> tr': {
     '&:hover': {
       backgroundColor: chroma(colors.primaryDarker).alpha(0.08).hex(),
+    },
+    '&.selected': {
+      backgroundColor: chroma(colors.primaryDarker).alpha(0.2).hex(),
     },
   },
 });
@@ -72,6 +76,8 @@ function InOutList() {
     data,
     pageSize,
   });
+
+  const [itemEdit, setItemEdit] = useState<RequireID<InOutDoc> | undefined>();
 
   const fetcher = useCallback(async () => {
     fetchInOut(user.uid);
@@ -117,8 +123,16 @@ function InOutList() {
           <TableBody>
             {(status === FS.SUCCESS || status === FS.UPDATING) &&
               dataShow?.map((item) => (
-                <tr key={item.id}>
-                  <TableCell>
+                <tr
+                  key={item.id}
+                  onClick={() => setItemEdit(item)}
+                  className={itemEdit?.id === item.id ? 'selected' : ''}
+                >
+                  <TableCell
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Checkbox
                       size={18}
                       checked={Boolean(inOutListStore.selectedItems[item.id])}
@@ -160,6 +174,14 @@ function InOutList() {
           </div>
         </StatusContainer>
       </ResponsiveTable>
+      <Edit
+        item={itemEdit}
+        open={itemEdit !== undefined}
+        onClose={() => setItemEdit(undefined)}
+        onAfterUpdate={() => {
+          return fetcher();
+        }}
+      />
     </div>
   );
 }
