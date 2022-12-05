@@ -12,7 +12,11 @@ import { formatNumber } from 'src/utils';
 import Skeleton from 'src/components/Skeleton';
 
 export default function IncomeStatistic() {
-  const [totalIncome, overallFS] = useDashboardStore((state) => [state.overall?.totalIncome, state.overallFS]);
+  const [totalIncome, overallFS, incomeThisMonth] = useDashboardStore((state) => [
+    state.overall?.totalIncome,
+    state.overallFS,
+    state.thisMonth?.income,
+  ]);
 
   return (
     <Card css={{ height: '100%' }}>
@@ -29,12 +33,17 @@ export default function IncomeStatistic() {
               </Text>
             </StatusContainer>
             <TextSmall css={{ marginBottom: 4 }}>This month</TextSmall>
-            <Text css={{ fontWeight: 500, marginBottom: 4 }}>
-              20,000,000 <TextSmall as="span">VND</TextSmall>
-            </Text>
+            <StatusContainer
+              status={overallFS}
+              loading={<Skeleton width={130} height={20} css={{ marginBottom: 4 }} />}
+            >
+              <Text css={{ fontWeight: 500, marginBottom: 4 }}>
+                {formatNumber(incomeThisMonth)} <TextSmall as="span">VND</TextSmall>
+              </Text>
+            </StatusContainer>
             <TextSmall>
               <TextSmall as="span" color={colors.primary}>
-                <ArrowUpIcon size={16} strokeWidth={1.5} css={{ verticalAlign: 'bottom' }} /> 8,04%
+                <ArrowUpIcon size={16} strokeWidth={1.5} css={{ verticalAlign: 'bottom' }} /> ---%
               </TextSmall>
               &nbsp;
               <TextSmall as="span">last month</TextSmall>

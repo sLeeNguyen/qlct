@@ -1,5 +1,6 @@
 import { doc, getDoc, getDocs, orderBy, query, Timestamp, where } from 'firebase/firestore';
 import { FS } from 'src/configs/fs';
+import { getInOutThisMonth } from 'src/firebase/apis';
 import { collections, HistoryDoc, OverallDoc } from 'src/firebase/collections';
 import { RequireID } from 'src/global';
 import create from 'zustand';
@@ -10,6 +11,10 @@ export type HistoryData = { [timestamp: number]: number };
 
 export interface UseDashboardStore {
   overall?: RequireID<OverallDoc>;
+  thisMonth?: {
+    income: number;
+    outcome: number;
+  };
   balanceFluctuation?: HistoryData;
   incomeHistory?: HistoryData;
   outcomeHistory?: HistoryData;
@@ -34,14 +39,26 @@ export const useDashboardStore = create<UseDashboardStore, [['zustand/immer', ne
       });
       try {
         const docSnap = await getDoc(doc(collections.overall, uid));
+        const inOutThisMonthSnap = await getInOutThisMonth(uid);
+        const thisMonth = { income: 0, outcome: 0 };
+        inOutThisMonthSnap.forEach((doc) => {
+          const data = doc.data();
+          if (data.type === 'income') {
+            thisMonth.income += data.value;
+          } else if (data.type === 'outcome') {
+            thisMonth.outcome += data.value;
+          }
+        });
         set((state: UseDashboardStore) => {
           state.overall = docSnap.data() as RequireID<OverallDoc>;
+          state.thisMonth = thisMonth;
           state.overallFS = FS.SUCCESS;
         });
       } catch (error) {
         console.error(error);
         set((state) => {
           state.overall = undefined;
+          state.thisMonth = undefined;
           state.overallFS = FS.FAILED;
         });
       }
@@ -95,6 +112,7 @@ export const useDashboardStore = create<UseDashboardStore, [['zustand/immer', ne
         state.overallFS = FS.IDLE;
         state.historiesFS = FS.IDLE;
         state.overall = undefined;
+        state.thisMonth = undefined;
         state.balanceFluctuation = undefined;
         state.incomeHistory = undefined;
         state.outcomeHistory = undefined;

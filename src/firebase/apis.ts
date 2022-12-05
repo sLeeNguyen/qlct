@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { addDoc, doc, getDocs, increment, orderBy, query, where, writeBatch } from 'firebase/firestore';
-import { useUserStore } from 'src/store';
+import { addDoc, doc, getDocs, increment, orderBy, query, Timestamp, where, writeBatch } from 'firebase/firestore';
+import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import firebase from '.';
 import { collections, History, InOutDoc } from './collections';
@@ -51,6 +51,18 @@ export async function removeCategories(cIds: string[]) {
     wb.delete(doc(collections.category, id));
   });
   await wb.commit();
+}
+
+export async function getInOutThisMonth(uid: User['uid']) {
+  const now = new Date();
+  const t = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  const q = query(
+    collections.inOut,
+    where('uid', '==', uid),
+    where('time', '>=', Timestamp.fromMillis(t)),
+    orderBy('time', 'asc')
+  );
+  return await getDocs(q);
 }
 
 export async function aggregateData() {
