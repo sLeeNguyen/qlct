@@ -44,7 +44,7 @@ export default function Add(props: Partial<ButtonProps>) {
   const [categories, fetchCategories, fetchInOut] = useManagementStore((state) => [
     state.categories,
     state.fetchCategories,
-    state.fetchInOut,
+    state.fetchInOut2,
   ]);
 
   const categoriesOptions = useMemo<ReactSelectOption[]>(() => {

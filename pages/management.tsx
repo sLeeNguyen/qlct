@@ -13,7 +13,7 @@ import Head from 'next/head';
 
 function Management() {
   const user = useUserStore((state) => state.user as User);
-  const [fetchCategories] = useManagementStore((state) => [state.fetchCategories, state.fetchInOut]);
+  const [fetchCategories] = useManagementStore((state) => [state.fetchCategories]);
 
   useEffect(() => {
     fetchCategories(user.uid);

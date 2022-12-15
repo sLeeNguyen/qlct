@@ -13,7 +13,7 @@ import { useInOutListStore } from './store';
 export default function Delete() {
   const user = useUserStore((state) => state.user as User);
   const [selectedItems, reset] = useInOutListStore((state) => [state.selectedItems, state.reset]);
-  const [fetchInOut, fetchCategories] = useManagementStore((state) => [state.fetchInOut, state.fetchCategories]);
+  const [fetchInOut, fetchCategories] = useManagementStore((state) => [state.fetchInOut2, state.fetchCategories]);
 
   const isShow = useMemo(() => Object.keys(selectedItems).length > 0, [selectedItems]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
