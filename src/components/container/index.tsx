@@ -8,7 +8,8 @@ export type ContainerProps = {
 export const Container = styled.div<ContainerProps>((props) => {
   const css: Attributes['css'] = {
     margin: 'auto',
-    width: '100%',
+    paddingLeft: '16px',
+    paddingRight: '16px',
   };
   if (typeof props.maxWidth === 'number') {
     css['maxWidth'] = props.maxWidth;
