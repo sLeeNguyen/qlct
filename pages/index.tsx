@@ -41,6 +41,7 @@ export default function IndexPage() {
               layout="responsive"
               width={SaveMoneyImg.width}
               height={SaveMoneyImg.height}
+              priority
             />
           </div>
         </div>

@@ -1,20 +1,22 @@
-import { getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { Timestamp, getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { FS } from 'src/configs/fs';
 import { CategoryDoc, collections, InOutDoc } from 'src/firebase/collections';
 import { RequireID } from 'src/global';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { User } from './user';
+import { FilterStore } from 'src/modules/management/InOutList/Filter/store';
+import dayjs from 'dayjs';
 
 export interface UseManagementStore {
-  categories?: CategoryDoc[];
+  categories?: RequireID<CategoryDoc>[];
   revenuesAndExpenditures?: {
     [id: string]: RequireID<InOutDoc>;
   };
   numberOfInOuts?: number;
   fetchCategories: (uid: User['uid']) => Promise<void>;
   fetchInOut: (uid: User['uid'], options?: FetchInOutOptions) => Promise<void>;
-  fetchInOut2: (uid: User['uid']) => Promise<void>;
+  fetchInOut2: (uid: User['uid'], options?: FetchInOut2Options) => Promise<void>;
   categoriesFS: FS;
   inOutFS: FS;
   pagination: {
@@ -28,6 +30,8 @@ export interface FetchInOutOptions {
   page?: number;
   pageSize?: number;
 }
+
+export type FetchInOut2Options = Pick<FilterStore, 'time' | 'type' | 'categories'>;
 
 export const useManagementStore = create<UseManagementStore, [['zustand/immer', never]]>(
   immer((set, get) => ({
@@ -50,7 +54,7 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
         const q = query<CategoryDoc>(collections.category, where('uid', '==', uid));
         const qSnap = await getDocs(q);
         set((state) => {
-          state.categories = qSnap.docs.map((doc) => doc.data());
+          state.categories = qSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
           state.categoriesFS = FS.SUCCESS;
         });
       } catch (error) {
@@ -113,7 +117,7 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
         });
       }
     },
-    fetchInOut2: async (uid: User['uid']) => {
+    fetchInOut2: async (uid: User['uid'], options?: FetchInOut2Options) => {
       set((state) => {
         if (state.inOutFS === FS.SUCCESS) {
           state.inOutFS = FS.UPDATING;
@@ -122,7 +126,51 @@ export const useManagementStore = create<UseManagementStore, [['zustand/immer', 
         }
       });
       try {
-        const q = query<InOutDoc>(collections.inOut, where('uid', '==', uid), orderBy('time', 'desc'));
+        const constraints = [where('uid', '==', uid), orderBy('time', 'desc')];
+        if (options) {
+          // type
+          if (options.type === 'in') {
+            constraints.push(where('type', '==', 'income'));
+          } else if (options.type === 'out') {
+            constraints.push(where('type', '==', 'outcome'));
+          }
+
+          // time
+          if (options.time) {
+            let from, to;
+            if (options.time === '7da') {
+              from = new Date(dayjs(new Date()).subtract(7, 'day').toDate().toDateString());
+            } else if (options.time === '1ma') {
+              from = new Date(dayjs(new Date()).subtract(1, 'month').toDate().toDateString());
+            } else if (options.time === '3ma') {
+              from = new Date(dayjs(new Date()).subtract(3, 'months').toDate().toDateString());
+            } else if (options.time === '6ma') {
+              from = new Date(dayjs(new Date()).subtract(6, 'months').toDate().toDateString());
+            } else if (options.time === '1ya') {
+              from = new Date(dayjs(new Date()).subtract(1, 'year').toDate().toDateString());
+            } else {
+              if (typeof options.time === 'object') {
+                if (!options.time.from || !options.time.to) {
+                  throw new Error('Invalid time range');
+                }
+                from = options.time.from;
+                to = options.time.to;
+              }
+            }
+            if (from) {
+              constraints.push(where('time', '>=', Timestamp.fromDate(from)));
+              if (to) {
+                constraints.push(where('time', '<=', Timestamp.fromDate(to)));
+              }
+            }
+          }
+
+          // categories
+          if (options.categories && options.categories.length) {
+            constraints.push(where('categories', 'array-contains-any', options.categories));
+          }
+        }
+        const q = query<InOutDoc>(collections.inOut, ...constraints);
         const qSnap = await getDocs(q);
         set((state) => {
           state.revenuesAndExpenditures = qSnap.docs.reduce<{ [id: string]: RequireID<InOutDoc> }>((acc, doc) => {

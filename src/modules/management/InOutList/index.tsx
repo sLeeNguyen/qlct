@@ -18,6 +18,8 @@ import { formatNumber } from 'src/utils';
 import Edit from './Edit';
 import ListActions from './ListActions';
 import { useInOutListStore } from './store';
+import { useFilterStore } from './Filter/store';
+import InformationBar from './InformationBar';
 
 const ResponsiveTable = styled.div({
   backgroundColor: colors.surface,
@@ -62,6 +64,7 @@ const TableCell = styled.td<TableCellProps>((props) => ({
 
 function InOutList() {
   const user = useUserStore((state) => state.user as User);
+  const filters = useFilterStore((state) => state.appliedFilters);
   const [status, fetchInOut, normalizedData] = useManagementStore((state) => [
     state.inOutFS,
     state.fetchInOut2,
@@ -80,8 +83,8 @@ function InOutList() {
   const [itemEdit, setItemEdit] = useState<RequireID<InOutDoc> | undefined>();
 
   const fetcher = useCallback(async () => {
-    fetchInOut(user.uid);
-  }, [fetchInOut, user]);
+    fetchInOut(user.uid, filters);
+  }, [fetchInOut, user, filters]);
 
   useEffect(() => {
     fetcher();
@@ -102,6 +105,9 @@ function InOutList() {
           List of incomes and outcomes
         </Text>
         <ListActions />
+      </div>
+      <div css={{ marginBottom: 12 }}>
+        <InformationBar />
       </div>
       <ResponsiveTable>
         <Table>
@@ -137,6 +143,9 @@ function InOutList() {
                       size={18}
                       checked={Boolean(inOutListStore.selectedItems[item.id])}
                       onClick={() => inOutListStore.toggleItem(item.id)}
+                      onChange={() => {
+                        // pass
+                      }}
                     />
                   </TableCell>
                   <TableCell noWrap>{new Date(item.time).toLocaleString()}</TableCell>

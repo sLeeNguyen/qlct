@@ -72,10 +72,10 @@ export const InputWithIcon = styled.div<AdditionalInputWithIconProps>((props) =>
 }));
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(props, ref) {
-  const { helperText, error, fullWidth, ...other } = props;
+  const { helperText, error, ...other } = props;
   return (
     <>
-      <StyledInput ref={ref} {...other} error={error} />
+      <StyledInput ref={ref} {...other} error={error} data-error={error ? 'true' : 'false'} />
       {helperText && <TextSmall color={error ? colors.error : undefined}>{helperText}</TextSmall>}
     </>
   );

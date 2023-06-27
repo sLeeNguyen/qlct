@@ -1,7 +1,6 @@
-import { Filter as FilterIcon } from 'react-feather';
-import Button from 'src/components/Button';
 import Add from './Add';
 import Delete from './Delete';
+import Filter from './Filter';
 
 export default function ListActions() {
   return (
@@ -14,9 +13,7 @@ export default function ListActions() {
     >
       <Delete />
       <Add />
-      <Button size="small" variant="contained" color="primary" startIcon={<FilterIcon size={16} />}>
-        Filter
-      </Button>
+      <Filter />
     </div>
   );
 }

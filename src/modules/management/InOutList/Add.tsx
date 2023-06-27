@@ -17,6 +17,7 @@ import { addInOut } from 'src/firebase/apis';
 import useComponentDidUpdate from 'src/hooks/useComponentDidUpdate';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
+import { useFilterStore } from './Filter/store';
 
 export type FormDataState = {
   type: 'income' | 'outcome';
@@ -41,6 +42,7 @@ export type ReactSelectOption = {
 
 export default function Add(props: Partial<ButtonProps>) {
   const user = useUserStore((state) => state.user as User);
+  const filters = useFilterStore((state) => state.appliedFilters);
   const [categories, fetchCategories, fetchInOut] = useManagementStore((state) => [
     state.categories,
     state.fetchCategories,
@@ -164,7 +166,7 @@ export default function Add(props: Partial<ButtonProps>) {
       });
       toast.success('Added successfully');
       fetchCategories(user.uid);
-      fetchInOut(user.uid);
+      fetchInOut(user.uid, filters);
       setFormData({ type: 'outcome', value: '0', time: formData.time, content: '', categories: [] });
     } catch (error) {
       console.error(error);

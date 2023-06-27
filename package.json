@@ -11,10 +11,11 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@popperjs/core": "^2.11.6",
     "chroma-js": "^2.4.2",
+    "dayjs": "^1.11.8",
     "firebase": "^9.9.4",
     "immer": "^9.0.15",
     "lodash.omit": "^4.5.0",

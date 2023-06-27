@@ -9,9 +9,11 @@ import { deleteInOuts } from 'src/firebase/apis';
 import { User, useUserStore } from 'src/store';
 import { useManagementStore } from 'src/store/management';
 import { useInOutListStore } from './store';
+import { useFilterStore } from './Filter/store';
 
 export default function Delete() {
   const user = useUserStore((state) => state.user as User);
+  const filters = useFilterStore((state) => state.appliedFilters);
   const [selectedItems, reset] = useInOutListStore((state) => [state.selectedItems, state.reset]);
   const [fetchInOut, fetchCategories] = useManagementStore((state) => [state.fetchInOut2, state.fetchCategories]);
 
@@ -27,7 +29,7 @@ export default function Delete() {
       if (arrSelectedItems.length > 0) {
         await deleteInOuts(arrSelectedItems);
         reset();
-        fetchInOut(user.uid);
+        fetchInOut(user.uid, filters);
         fetchCategories(user.uid);
         toast.success('Deleted successfully');
       }
